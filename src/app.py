@@ -12,14 +12,17 @@ db = SQLAlchemy(app)
 # Define models
 class FishingSession(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    start_time = db.Column(db.DateTime, default=datetime.utcnow)
+    start_time = db.Column(db.DateTime, default=datetime.now)
     end_time = db.Column(db.DateTime, nullable=True)
-    location = db.Column(db.String(100))
 
 class Catch(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, default=datetime.now)
     session_id = db.Column(db.Integer, db.ForeignKey('fishing_session.id'), nullable=False)
-    catch_time = db.Column(db.DateTime, default=datetime.utcnow)
+    #TODO: Turn location into coordinates
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    catch_time = db.Column(db.DateTime, default=datetime.now)
     species = db.Column(db.String(50))
     size = db.Column(db.Float)
     lure_used = db.Column(db.String(50))
@@ -53,28 +56,24 @@ def start_session():
 def log_catch():
     data = request.json
     session_id = data['session_id']
+    latitude = data.get('latitude', 0)
+    longitude = data.get('longitude', 0)
+    date = data.get('date', datetime.now())
     fish_type = data.get('fish_type', 'Unknown')
     weight = data.get('weight', 0)
     size = data.get('size', 0)
     lure_used = data.get('lure_used', 'Unknown')
     technique = data.get('technique', 'Unknown')
 
-    #TODO: Create helper function to validate all the data
-    moon_phase = data.get('moon_phase', 'Unknown') 
-    weather = data.get('weather', 'Unknown') #
-    wind_speed = data.get('wind_speed', 0) #
-    wind_direction = data.get('wind_direction', 'Unknown') #
-    water_type = data.get('water_type', 'Unknown') #
-    water_temp = data.get('water_temp', 0) #
-    water_level = data.get('water_level', 'Unknown') #
-    air_temperature = data.get('air_temperature', 0) #
-    air_pressure = data.get('air_pressure', 0) #
 
+    #TODO: Create helper function to validate all the data
+    mooon_phase = get_moon_phase(date, latitude, longitude)
     
-    catch = Catch(session_id=session_id, fish_type=fish_type, weight=weight, size=size, lure_used=lure_used,
-                  technique=technique, moon_phase=moon_phase, weather=weather, wind_speed=wind_speed, 
-                  wind_direction=wind_direction, water_type=water_type, water_temp=water_temp, water_level=water_level, 
-                  air_temperature=air_temperature, air_pressure=air_pressure)
+    
+    catch = Catch(session_id=session_id, latitude = latitude, longitude = longitude, date = date, fish_type=fish_type, 
+                  weight=weight, size=size, lure_used=lure_used, technique=technique, moon_phase=moon_phase, 
+                  weather=weather, wind_speed=wind_speed, wind_direction=wind_direction, water_type=water_type, 
+                  water_temp=water_temp, water_level=water_level, air_temperature=air_temperature, air_pressure=air_pressure)
     
     db.session.add(catch)
     db.session.commit()
