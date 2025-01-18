@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from helper import *
+from helper import get_weather_data, get_water_data
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fishing_log.db'
@@ -27,15 +27,19 @@ class Catch(db.Model):
     size = db.Column(db.Float)
     lure_used = db.Column(db.String(50))
     technique = db.Column(db.String(50))
+
+    #Weather data obtained from Tomorrow.io
     moon_phase = db.Column(db.String(50))
     weather = db.Column(db.String(50))
     wind_speed = db.Column(db.Float)
     wind_direction = db.Column(db.String(50))
+    air_temperature = db.Column(db.Float)
+
+    #Water data obtained from RWS
+    air_pressure = db.Column(db.Float)
     water_type = db.Column(db.String(50))
     water_temp = db.Column(db.Float)
     water_level = db.Column(db.String(50))
-    air_temperature = db.Column(db.Float)
-    air_pressure = db.Column(db.Float)
 
 
 # Create database tables
@@ -65,12 +69,12 @@ def log_catch():
     lure_used = data.get('lure_used', 'Unknown')
     technique = data.get('technique', 'Unknown')
 
-
     #TODO: Create helper function to validate all the data
+    weather_data = get_weather_data()
     mooon_phase = get_moon_phase(date, latitude, longitude)
     
     
-    catch = Catch(session_id=session_id, latitude = latitude, longitude = longitude, date = date, fish_type=fish_type, 
+    catch = Catch(session_id=session_id, latitude=latitude, longitude=longitude, date=date, fish_type=fish_type, 
                   weight=weight, size=size, lure_used=lure_used, technique=technique, moon_phase=moon_phase, 
                   weather=weather, wind_speed=wind_speed, wind_direction=wind_direction, water_type=water_type, 
                   water_temp=water_temp, water_level=water_level, air_temperature=air_temperature, air_pressure=air_pressure)

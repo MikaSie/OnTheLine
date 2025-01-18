@@ -9,10 +9,6 @@ __pycache__/
 venv/
 env/
 
-# Data folders
-data/images/
-data/messages/
-
 # Other
 .idea/
 .vscode/
