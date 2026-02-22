@@ -1,17 +1,95 @@
-# Python specific
+# =========================
+# Python
+# =========================
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-*.env
+*$py.class
 
-# Virtual environment
+# Compiled extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+.venv/
 venv/
 env/
+ENV/
+
+# =========================
+# Testing
+# =========================
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# =========================
+# IDEs & Editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+!.env.example
 .venv
 
-# Other
-.idea/
-.vscode/
+# =========================
+# SQLite / Local Databases
+# =========================
+*.db
+*.sqlite3
+
+# If you keep dev DB in a specific place:
+# apps/api/dev.db
+
+# =========================
+# Logs
+# =========================
 *.log
-.DS_Store
+logs/
+
+# =========================
+# Alembic / Migrations
+# =========================
+# DO NOT ignore migrations folder itself
+# Only ignore compiled files
+migrations/__pycache__/
+
+# =========================
+# Node (for future web/mobile)
+# =========================
+node_modules/
+dist/
+build/
+.next/
+expo/
+.android/
+.ios/
+
+# =========================
+# Docker
+# =========================
+*.pid
+*.seed
+
+# =========================
+# Misc
+# =========================
+.cache/
