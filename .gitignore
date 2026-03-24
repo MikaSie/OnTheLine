@@ -55,6 +55,7 @@ htmlcov/
 # =========================
 *.db
 *.sqlite3
+*.sqlite
 
 # If you keep dev DB in a specific place:
 # apps/api/dev.db
