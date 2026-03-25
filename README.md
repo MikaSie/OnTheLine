@@ -2,7 +2,7 @@
 
 A fishing tool built by fishermen, for fishermen — to track catches and analyze shared data.
 
-<img src="docs/media/OnTheLine_Logo_no_bg.png" width="250" aria-hidden="true">
+<img src="docs/media/OnTheLine_Logo_no_bg.png" width="250" aria-hidden="true" center="true">
 
 ## Overview
 
