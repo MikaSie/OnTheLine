@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 
-from app.schemas.catch import CatchCreate
+from app.schemas.catch_service import CatchCreate
 from app.services.catch_service import CatchService
 
 routes = Blueprint("routes", __name__)
