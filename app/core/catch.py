@@ -24,13 +24,35 @@ class Catch:
         notes: Optional[str] = None,
         timestamp: Optional[datetime] = None,
     ) -> "Catch":
-        """Create a new Catch with generated id + default timestamp."""
+        # --- Type + basic validation ---
+        lat = float(lat)
+        lon = float(lon)
+
+        if not isinstance(species, str):
+            raise ValueError("Species must be a string")
+
+        if technique is not None and not isinstance(technique, str):
+            raise ValueError("Technique must be a string or None")
+
+        if notes is not None and not isinstance(notes, str):
+            raise ValueError("Notes must be a string or None")
+
+        # --- Domain validation ---
+        if not -90 <= lat <= 90:
+            raise ValueError("Latitude must be between -90 and 90")
+
+        if not -180 <= lon <= 180:
+            raise ValueError("Longitude must be between -180 and 180")
+
+        species = species.strip()
+
         ts = timestamp or datetime.now(timezone.utc)
+
         return Catch(
             id=str(uuid4()),
             timestamp=ts,
-            lat=float(lat),
-            lon=float(lon),
+            lat=lat,
+            lon=lon,
             species=species,
             technique=technique,
             notes=notes,
@@ -47,20 +69,3 @@ class Catch:
             "technique": self.technique,
             "notes": self.notes,
         }
-
-
-if __name__ == "__main__":
-    # Create a new catch
-    c = Catch.new(
-        lat=-18.2871,
-        lon=147.6992,
-        species="GT",
-        technique="popping",
-        notes="Surface explosion at sunrise",
-    )
-
-    print("Created Catch:")
-    print(c)
-
-    print("\nAs dict:")
-    print(c.to_dict())

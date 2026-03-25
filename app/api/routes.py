@@ -1,17 +1,18 @@
-from flask import Flask, request, jsonify
-from ontheline_core.catch import Catch
+from flask import Blueprint, jsonify, request
 
-app = Flask(__name__)
+from app.schemas.catch import CatchCreate
+from app.services.catch_service import CatchService
 
-catches = []
+routes = Blueprint("routes", __name__)
+catch_service = CatchService()
 
 
-@app.route("/")
+@routes.route("/")
 def home():
     return {"message": "Fishing log API is running"}
 
 
-@app.route("/catches", methods=["POST"])
+@routes.route("/catches", methods=["POST"])
 def create_catch():
     data = request.get_json()
 
@@ -22,25 +23,38 @@ def create_catch():
         return jsonify({"error": "Fields 'lat' and 'lon' are required"}), 400
 
     try:
-        new_catch = Catch.new(
-            lat=data["lat"],
-            lon=data["lon"],
+        catch_input = CatchCreate(
+            lat=float(data["lat"]),
+            lon=float(data["lon"]),
             species=data.get("species", ""),
             technique=data.get("technique"),
             notes=data.get("notes"),
         )
-    except (TypeError, ValueError):
-        return jsonify({"error": "Invalid value for lat or lon"}), 400
 
-    catches.append(new_catch)
+        new_catch = catch_service.create_catch(
+            lat=catch_input.lat,
+            lon=catch_input.lon,
+            species=catch_input.species,
+            technique=catch_input.technique,
+            notes=catch_input.notes,
+        )
+    except (TypeError, ValueError) as exc:
+        return jsonify({"error": str(exc)}), 400
 
     return jsonify(new_catch.to_dict()), 201
 
 
-@app.route("/catches", methods=["GET"])
+@routes.route("/catches", methods=["GET"])
 def get_catches():
-    return jsonify([c.to_dict() for c in catches])
+    catches = catch_service.list_catches()
+    return jsonify([catch.to_dict() for catch in catches])
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+@routes.route("/catches/<catch_id>", methods=["GET"])
+def get_catch(catch_id: str):
+    catch = catch_service.get_catch_by_id(catch_id)
+
+    if catch is None:
+        return jsonify({"error": "Catch not found"}), 404
+
+    return jsonify(catch.to_dict()), 200
