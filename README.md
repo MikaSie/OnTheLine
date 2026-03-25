@@ -5,6 +5,7 @@ A fishing tool built by fishermen, for fishermen — to track catches and analyz
 <p align="center">
   <img src="docs/media/OnTheLine_Logo_no_bg.png" width="350">
 </p>
+
 ## Overview
 
 OnTheLine is a backend-first application designed to:
