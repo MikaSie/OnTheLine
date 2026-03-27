@@ -3,9 +3,11 @@ from datetime import datetime, timezone
 from typing import Optional, Any
 from uuid import uuid4
 
+# Actual domain concept
+
 
 @dataclass(frozen=True)
-class Catch:
+class CatchEntity:
     id: str
     timestamp: datetime
     lat: float
@@ -23,7 +25,7 @@ class Catch:
         technique: Optional[str] = None,
         notes: Optional[str] = None,
         timestamp: Optional[datetime] = None,
-    ) -> "Catch":
+    ) -> "CatchEntity":
         # --- Type + basic validation ---
         lat = float(lat)
         lon = float(lon)
@@ -48,7 +50,7 @@ class Catch:
 
         ts = timestamp or datetime.now(timezone.utc)
 
-        return Catch(
+        return CatchEntity(
             id=str(uuid4()),
             timestamp=ts,
             lat=lat,
@@ -57,15 +59,3 @@ class Catch:
             technique=technique,
             notes=notes,
         )
-
-    def to_dict(self) -> dict[str, Any]:
-        """Serialize for JSON responses."""
-        return {
-            "id": self.id,
-            "timestamp": self.timestamp.isoformat(),
-            "lat": self.lat,
-            "lon": self.lon,
-            "species": self.species,
-            "technique": self.technique,
-            "notes": self.notes,
-        }

@@ -48,6 +48,24 @@ The project follows a layered architecture to keep the codebase scalable and mai
 - scalable structure
 - incremental development
 
+## Mental model for myself:
+
+Schema
+
+- “What does the API accept/return?”
+
+Core
+
+- “What is a valid catch in my app?”
+
+DB model
+
+- “How is a catch stored in SQLite?”
+
+Service
+
+- “What actions can the app perform with catches?”
+
 ## Getting Started
 
 Run the application from the project root:
