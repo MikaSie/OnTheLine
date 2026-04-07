@@ -78,7 +78,7 @@ class CatchService:
     ) -> CatchEntity | None:
         catch = self._db.get(CatchModel, catch_id)
 
-        if catch_id is None:
+        if catch is None:
             return None
 
         catch.lat = lat
