@@ -243,8 +243,8 @@ def test_create_catch_returns_400_invalid_notes_type(client):
                 "lat": 52.0,
                 "lon": 4.0,
                 "species": "Seabass",
-                "technique": 5,
-                "notes": "Nice fish",
+                "technique": "Jig",
+                "notes": 5,
             },
         )
 
