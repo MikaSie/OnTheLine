@@ -402,7 +402,7 @@ def test_get_catch_returns_404(client):
 
 
 def test_delete_catch_returns_200(client):
-    random_catch_id = str(uuid4)
+    random_catch_id = str(uuid4())
     mock_service_instance = MagicMock()
     mock_service_instance.delete_catch.return_value = True
 
@@ -426,7 +426,7 @@ def test_delete_catch_returns_200(client):
 
 
 def test_delete_catch_returns_404(client):
-    random_catch_id = str(uuid4)
+    random_catch_id = str(uuid4())
     mock_service_instance = MagicMock()
     mock_service_instance.delete_catch.return_value = False
 
