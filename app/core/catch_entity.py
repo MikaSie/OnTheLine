@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Optional, Any
+from typing import Optional
 from uuid import uuid4
 
 # Actual domain concept
@@ -8,7 +8,7 @@ from uuid import uuid4
 
 @dataclass(frozen=True)
 class CatchEntity:
-    id: str
+    catch_id: str
     timestamp: datetime
     lat: float
     lon: float
@@ -51,7 +51,7 @@ class CatchEntity:
         ts = timestamp or datetime.now(timezone.utc)
 
         return CatchEntity(
-            id=str(uuid4()),
+            catch_id=str(uuid4()),
             timestamp=ts,
             lat=lat,
             lon=lon,

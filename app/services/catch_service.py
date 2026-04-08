@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from app.core.catch_entity import CatchEntity
 from app.db.models import CatchModel
 
+UNSET = object()
 # Layer that coordinates everything
 #  Service currently does this:
 # •	receives plain input values
@@ -17,7 +18,7 @@ class CatchService:
 
     def _to_entity(self, db_catch: CatchModel) -> CatchEntity:
         return CatchEntity(
-            id=db_catch.id,
+            catch_id=db_catch.catch_id,
             timestamp=db_catch.timestamp,
             lat=db_catch.lat,
             lon=db_catch.lon,
@@ -45,7 +46,7 @@ class CatchService:
         )
 
         db_catch = CatchModel(
-            id=new_catch.id,
+            catch_id=new_catch.catch_id,
             timestamp=new_catch.timestamp,
             lat=new_catch.lat,
             lon=new_catch.lon,
@@ -64,33 +65,56 @@ class CatchService:
         return [self._to_entity(catch) for catch in catches]
 
     def get_catch(self, catch_id: str) -> CatchEntity | None:
-        catch = self._db.query(CatchModel).filter(CatchModel.id == catch_id).first()
+        catch = (
+            self._db.query(CatchModel).filter(CatchModel.catch_id == catch_id).first()
+        )
         return self._to_entity(catch) if catch else None
 
     def update_catch(
         self,
         catch_id: str,
-        lat: float,
-        lon: float,
-        species: str = "",
-        technique: str | None = None,
-        notes: str | None = None,
+        lat: float | object = UNSET,
+        lon: float | object = UNSET,
+        species: str | object = UNSET,
+        technique: str | None | object = UNSET,
+        notes: str | None | object = UNSET,
     ) -> CatchEntity | None:
-        catch = self._db.get(CatchModel, catch_id)
 
-        if catch_id is None:
+        old_catch = self._db.get(CatchModel, catch_id)
+
+        if old_catch is None:
             return None
 
-        catch.lat = lat
-        catch.lon = lon
-        catch.species = species
-        catch.technique = technique
-        catch.notes = notes
+        if lat is UNSET:
+            lat = old_catch.lat
+        if lon is UNSET:
+            lon = old_catch.lon
+        if species is UNSET:
+            species = old_catch.species
+        if technique is UNSET:
+            technique = old_catch.technique
+        if notes is UNSET:
+            notes = old_catch.notes
+
+        validated = CatchEntity.new(
+            lat=lat,
+            lon=lon,
+            species=species,
+            technique=technique,
+            notes=notes,
+            timestamp=old_catch.timestamp,
+        )
+
+        old_catch.lat = validated.lat
+        old_catch.lon = validated.lon
+        old_catch.species = validated.species
+        old_catch.technique = validated.technique
+        old_catch.notes = validated.notes
 
         self._db.commit()
-        self._db.refresh(catch)
+        self._db.refresh(old_catch)
 
-        return self._to_entity(catch)
+        return self._to_entity(old_catch)
 
     def delete_catch(self, catch_id: str) -> bool:
         catch = self._db.get(CatchModel, catch_id)

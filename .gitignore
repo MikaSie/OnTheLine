@@ -30,6 +30,7 @@ ENV/
 htmlcov/
 .mypy_cache/
 .ruff_cache/
+scripts/requests.md
 
 # =========================
 # IDEs & Editors
