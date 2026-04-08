@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Optional, Any
+from typing import Optional
 from uuid import uuid4
 
 # Actual domain concept
