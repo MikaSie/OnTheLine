@@ -18,7 +18,7 @@ class CatchCreate(BaseModel):
 class CatchRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: str
+    catch_id: str
     timestamp: datetime
     lat: float
     lon: float

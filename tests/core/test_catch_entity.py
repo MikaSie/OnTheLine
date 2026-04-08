@@ -18,7 +18,7 @@ def test_create_catch_with_valid_input():
     assert catch.species == "Sea Trout"
     assert catch.technique == "Spinning"
     assert catch.notes == "Caught near rocks"
-    assert isinstance(catch.id, str)
+    assert isinstance(catch.catch_id, str)
 
 
 def test_create_catch_uses_given_timestamp():

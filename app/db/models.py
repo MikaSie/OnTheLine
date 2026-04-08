@@ -12,7 +12,7 @@ class Base(DeclarativeBase):
 class CatchModel(Base):
     __tablename__ = "catches"
 
-    id: Mapped[str] = mapped_column(String, primary_key=True)
+    catch_id: Mapped[str] = mapped_column(String, primary_key=True)
     timestamp: Mapped[datetime] = mapped_column(DateTime)
     lat: Mapped[float] = mapped_column(Float)
     lon: Mapped[float] = mapped_column(Float)
