@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../..
 import { Skeleton } from "../../../components/ui/skeleton";
 import { useToast } from "../../../components/ui/toaster";
 import { formatCoordinate, formatDateTime } from "../../../lib/formatters";
+import { CatchMap } from "../../maps/components/catch-map";
 import { useCatch, useDeleteCatch } from "../hooks/use-catches";
 import { ConfirmDialog } from "../components/confirm-dialog";
 import { StatBadge } from "../components/stat-badge";
@@ -67,11 +68,19 @@ export function CatchDetailPage() {
                 Edit
               </Link>
             </Button>
+            <ConfirmDialog
+              triggerLabel="Delete catch"
+              title="Delete this catch?"
+              description="This removes the record from the log. Use this only if the entry is incorrect or no longer needed."
+              confirmLabel={deleteMutation.isPending ? "Deleting..." : "Delete"}
+              disabled={deleteMutation.isPending}
+              onConfirm={() => deleteMutation.mutate(catchEntry.catch_id)}
+            />
           </div>
         }
       />
 
-      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+      <div className="space-y-6">
         <Card className="overflow-hidden">
           <CardHeader>
             <CardTitle>Record overview</CardTitle>
@@ -110,24 +119,18 @@ export function CatchDetailPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="overflow-hidden">
           <CardHeader>
-            <CardTitle>Record actions</CardTitle>
+            <CardTitle>Catch map</CardTitle>
             <CardDescription>
-              Keep the log accurate without losing clarity over destructive changes.
+              Review the exact logged position directly alongside the rest of the record.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <Button asChild className="w-full">
-              <Link to={`/catches/${catchEntry.catch_id}/edit`}>Open editor</Link>
-            </Button>
-            <ConfirmDialog
-              triggerLabel="Delete catch"
-              title="Delete this catch?"
-              description="This removes the record from the log. Use this only if the entry is incorrect or no longer needed."
-              confirmLabel={deleteMutation.isPending ? "Deleting..." : "Delete"}
-              disabled={deleteMutation.isPending}
-              onConfirm={() => deleteMutation.mutate(catchEntry.catch_id)}
+          <CardContent>
+            <CatchMap
+              catches={[catchEntry]}
+              className="h-[360px]"
+              selectedPoint={{ lat: catchEntry.lat, lon: catchEntry.lon }}
             />
           </CardContent>
         </Card>

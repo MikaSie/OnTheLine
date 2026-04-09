@@ -104,6 +104,15 @@ A premium React + Vite client now lives in [`frontend/`](frontend/) with:
 - Radix UI primitives
 - React Hook Form + Zod
 - Recharts
+- Leaflet + React Leaflet with OpenStreetMap tiles
+
+Current frontend highlights:
+
+- Dashboard analytics with charts and a catch map
+- Catch detail page with an integrated location map
+- Catch create/edit flows with an inline map picker
+- Staged location changes on edit so users can preview a new point before confirming it
+- Frontend test coverage for map utilities, dashboard map rendering, and catch form/detail flows
 
 Recommended local workflow:
 
@@ -142,6 +151,14 @@ Run tests:
 uv run python -m pytest tests/
 ```
 
+Run frontend checks:
+
+```bash
+cd frontend
+npm test
+npm run lint
+```
+
 ## Notes
 
 - The SQLite database file is created under `app/db/`.
@@ -151,6 +168,7 @@ uv run python -m pytest tests/
 ## Future Ideas
 
 - Filtering by species, location, or technique
+- Map-based filtering, clustering, and saved spots
 - User accounts and authentication
 - Fishing session tracking
 - Analytics and dashboards
