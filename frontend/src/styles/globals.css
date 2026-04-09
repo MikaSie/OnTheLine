@@ -43,6 +43,19 @@
   #root {
     @apply min-h-screen;
   }
+
+  .leaflet-container {
+    height: 100%;
+    width: 100%;
+    background: #020617;
+    font: inherit;
+  }
+
+  .leaflet-popup-content-wrapper,
+  .leaflet-popup-tip {
+    background: rgba(248, 250, 252, 0.96);
+    color: #0f172a;
+  }
 }
 
 @layer components {

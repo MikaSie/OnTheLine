@@ -11,6 +11,7 @@ import { formatDateTime, formatShortDate } from "../../../lib/formatters";
 import { useCatches } from "../../catches/hooks/use-catches";
 import { QuickActionPanel } from "../../catches/components/quick-action-panel";
 import { ActivityTimeline } from "../components/activity-timeline";
+import { DashboardMapCard } from "../components/dashboard-map-card";
 import { InsightChartCard } from "../components/insight-chart-card";
 import { MetricCard } from "../components/metric-card";
 import { buildRecentActivity, buildSpeciesMix, buildSummary, buildTechniqueMix } from "../lib/analytics";
@@ -141,6 +142,8 @@ export function DashboardPage() {
           icon={<Radar className="h-5 w-5" />}
         />
       </div>
+
+      <DashboardMapCard catches={catches} />
 
       <Tabs defaultValue="insights" className="space-y-7">
         <TabsList>

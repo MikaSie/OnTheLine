@@ -8,6 +8,7 @@ import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { Textarea } from "../../../components/ui/textarea";
 import type { Catch } from "../../../lib/types";
+import { toMapPoint } from "../../maps/lib/map-utils";
 import { catchFormSchema, type CatchFormValues } from "../lib/catch-form-schema";
 import { LocationFieldGroup } from "./location-field-group";
 
@@ -39,8 +40,12 @@ export function CatchForm({
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = form;
+
+  const selectedPoint = toMapPoint(watch("lat"), watch("lon"));
 
   useEffect(() => {
     reset({
@@ -65,7 +70,12 @@ export function CatchForm({
       </CardHeader>
       <CardContent>
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <LocationFieldGroup register={register} errors={errors} />
+          <LocationFieldGroup
+            errors={errors}
+            register={register}
+            selectedPoint={selectedPoint}
+            setValue={setValue}
+          />
 
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-2">

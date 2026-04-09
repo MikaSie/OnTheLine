@@ -5,9 +5,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DashboardPage } from "./dashboard-page";
 
 const mockUseCatches = vi.fn();
+const mockDashboardMapCard = vi.fn(
+  ({ catches }: { catches: { catch_id: string }[] }) => (
+    <div data-testid="dashboard-map-card">Mapped catches: {catches.length}</div>
+  ),
+);
 
 vi.mock("../../catches/hooks/use-catches", () => ({
   useCatches: () => mockUseCatches(),
+}));
+
+vi.mock("../components/dashboard-map-card", () => ({
+  DashboardMapCard: (props: { catches: { catch_id: string }[] }) => mockDashboardMapCard(props),
 }));
 
 vi.mock("recharts", () => ({
@@ -49,6 +58,7 @@ const catches = [
 describe("DashboardPage", () => {
   beforeEach(() => {
     mockUseCatches.mockReset();
+    mockDashboardMapCard.mockClear();
     mockUseCatches.mockReturnValue({
       isLoading: false,
       isError: false,
@@ -70,6 +80,7 @@ describe("DashboardPage", () => {
     expect(screen.getByText("Techniques tracked")).toBeInTheDocument();
     expect(screen.getAllByText(/^2$/)).toHaveLength(5);
     expect(screen.getByText("Live")).toBeInTheDocument();
+    expect(screen.getByTestId("dashboard-map-card")).toHaveTextContent("Mapped catches: 2");
   });
 
   it("shows the error state when catches cannot be loaded", () => {
@@ -103,5 +114,6 @@ describe("DashboardPage", () => {
 
     expect(screen.getByText("Standby")).toBeInTheDocument();
     expect(screen.getByText("Awaiting first catch")).toBeInTheDocument();
+    expect(screen.getByTestId("dashboard-map-card")).toHaveTextContent("Mapped catches: 0");
   });
 });
