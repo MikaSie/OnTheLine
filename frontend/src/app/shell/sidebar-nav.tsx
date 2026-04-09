@@ -12,9 +12,9 @@ const navItems = [
 
 export function SidebarNav() {
   return (
-    <aside className="hidden w-[280px] shrink-0 border-r border-white/10 bg-black/20 px-6 py-8 lg:flex lg:flex-col">
+    <aside className="hidden w-[272px] shrink-0 border-r border-white/10 bg-black/20 px-5 py-7 lg:flex lg:flex-col">
       <BrandMark />
-      <div className="mt-10 space-y-2">
+      <div className="mt-9 space-y-2">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
@@ -31,7 +31,7 @@ export function SidebarNav() {
           </NavLink>
         ))}
       </div>
-      <div className="mt-auto">
+      <div className="mt-auto pt-6">
         <Button asChild size="lg" className="w-full justify-center">
           <NavLink to="/catches/new">
             <PlusCircle className="h-4 w-4" />
