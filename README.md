@@ -93,6 +93,41 @@ Open:
 http://127.0.0.1:5000
 ```
 
+## Frontend
+
+A premium React + Vite client now lives in [`frontend/`](frontend/) with:
+
+- React + TypeScript
+- Vite
+- TanStack Query
+- Tailwind CSS
+- Radix UI primitives
+- React Hook Form + Zod
+- Recharts
+
+Recommended local workflow:
+
+1. Start the Flask API:
+
+```bash
+uv run python -m app.main
+```
+
+2. Install frontend dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+3. Start the frontend dev server:
+
+```bash
+npm run dev
+```
+
+The Vite app proxies `/api/*` requests to `http://127.0.0.1:5000`, so you can run the backend and frontend side by side without changing the Flask routes.
+
 ## Development
 
 Run linting:
@@ -119,7 +154,6 @@ uv run python -m pytest tests/
 - User accounts and authentication
 - Fishing session tracking
 - Analytics and dashboards
-- Web UI
 - Mobile UI
 
 ## License
