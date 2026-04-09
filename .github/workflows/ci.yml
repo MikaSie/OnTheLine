@@ -1,0 +1,19 @@
+name: OnTheLine CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check files
+        run: ls -la
+
+      - name: Check Python version
+        run: python3 --version
+
+      - name: Run tests
+        run: python3 -m pytest tests/
