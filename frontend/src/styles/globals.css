@@ -52,12 +52,12 @@
 
   .panel-grid {
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
     background-size: 40px 40px;
   }
 
   .text-kicker {
-    @apply text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground;
+    @apply text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground;
   }
 }

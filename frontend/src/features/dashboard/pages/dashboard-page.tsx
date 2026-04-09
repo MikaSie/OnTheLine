@@ -57,16 +57,15 @@ export function DashboardPage() {
   const recentActivity = buildRecentActivity(catches);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <Card className="panel-grid overflow-hidden bg-hero-mesh">
-        <CardContent className="grid gap-8 p-8 xl:grid-cols-[1.5fr_0.85fr]">
-          <div className="space-y-5">
-            <p className="text-kicker">Marine-tech dashboard</p>
-            <div className="space-y-3">
-              <h1 className="max-w-3xl font-display text-4xl font-semibold leading-tight md:text-5xl">
+        <CardContent className="grid gap-8 p-8 pt-10 xl:grid-cols-[1.3fr_0.8fr] xl:items-center">
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <h1 className="max-w-[15ch] font-display text-[2.85rem] font-semibold leading-[1.02] tracking-[-0.03em] md:text-[3.7rem] xl:text-[4.3rem]">
                 Premium catch intelligence for anglers who want a sharper edge.
               </h1>
-              <p className="max-w-2xl text-base text-slate-200/80">
+              <p className="max-w-[40rem] text-lg leading-8 text-slate-200/72">
                 Track every catch, read your patterns, and build a cleaner
                 understanding of what is working on the water.
               </p>
@@ -80,7 +79,7 @@ export function DashboardPage() {
               </Button>
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4">
+              <div className="rounded-2xl border border-white/10 bg-black/20 px-5 py-4">
                 <p className="text-xs uppercase tracking-[0.26em] text-muted-foreground">
                   Latest log
                 </p>
@@ -90,13 +89,13 @@ export function DashboardPage() {
                     : "Awaiting first catch"}
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4">
+              <div className="rounded-2xl border border-white/10 bg-black/20 px-5 py-4">
                 <p className="text-xs uppercase tracking-[0.26em] text-muted-foreground">
                   Species recorded
                 </p>
                 <p className="mt-2 font-medium">{summary.uniqueSpecies}</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4">
+              <div className="rounded-2xl border border-white/10 bg-black/20 px-5 py-4">
                 <p className="text-xs uppercase tracking-[0.26em] text-muted-foreground">
                   Techniques tracked
                 </p>
@@ -104,7 +103,9 @@ export function DashboardPage() {
               </div>
             </div>
           </div>
-          <QuickActionPanel />
+          <div className="xl:pl-3">
+            <QuickActionPanel />
+          </div>
         </CardContent>
       </Card>
 
@@ -141,7 +142,7 @@ export function DashboardPage() {
         />
       </div>
 
-      <Tabs defaultValue="insights" className="space-y-6">
+      <Tabs defaultValue="insights" className="space-y-7">
         <TabsList>
           <TabsTrigger value="insights">Insights</TabsTrigger>
           <TabsTrigger value="activity">Recent activity</TabsTrigger>
