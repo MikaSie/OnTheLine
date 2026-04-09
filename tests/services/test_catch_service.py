@@ -2,11 +2,9 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.services.catch_service import CatchService
 from app.core.catch_entity import CatchEntity
-
-from app.db.models import Base
-from app.db.models import CatchModel
+from app.db.models import Base, CatchModel
+from app.services.catch_service import CatchService
 
 
 @pytest.fixture

@@ -1,5 +1,6 @@
-from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict
 
 # When someone sends data to my API to create a catch, this is what I expect
 # This is the input format!

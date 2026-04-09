@@ -1,9 +1,11 @@
-import pytest
-from app.main import create_app
-from app.core.catch_entity import CatchEntity
-from unittest.mock import MagicMock, patch
 from datetime import datetime
+from unittest.mock import MagicMock, patch
 from uuid import uuid4
+
+import pytest
+
+from app.core.catch_entity import CatchEntity
+from app.main import create_app
 
 
 @pytest.fixture()
