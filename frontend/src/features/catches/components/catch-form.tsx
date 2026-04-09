@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
+import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { Textarea } from "../../../components/ui/textarea";
@@ -59,16 +59,7 @@ export function CatchForm({
 
   return (
     <Card className="overflow-hidden">
-      <CardHeader>
-        <CardTitle>
-          {mode === "create" ? "Log a new catch" : "Edit catch record"}
-        </CardTitle>
-        <CardDescription>
-          Capture location, species, method, and notes with clean validation and
-          room for detailed observations.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+      <CardContent className="p-5 md:p-6">
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <LocationFieldGroup
             errors={errors}
