@@ -31,6 +31,7 @@ htmlcov/
 .mypy_cache/
 .ruff_cache/
 scripts/requests.md
+docs/roadmap.md
 
 # =========================
 # IDEs & Editors

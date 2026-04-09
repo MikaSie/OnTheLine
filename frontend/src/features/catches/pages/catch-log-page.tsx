@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 
 import { EmptyState } from "../../../components/common/empty-state";
 import { SectionHeader } from "../../../components/common/section-header";
+import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Skeleton } from "../../../components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
+import { buildCatchAreaBuckets } from "../../../lib/catch-areas";
 import { useCatches } from "../hooks/use-catches";
 import { CatchCard } from "../components/catch-card";
 import { CatchFilters } from "../components/catch-filters";
@@ -16,13 +18,16 @@ export function CatchLogPage() {
   const catchesQuery = useCatches();
   const [search, setSearch] = useState("");
   const [technique, setTechnique] = useState("all");
+  const [area, setArea] = useState("all");
+  const [sort, setSort] = useState("newest");
 
   const catches = catchesQuery.data ?? [];
+  const areas = useMemo(() => buildCatchAreaBuckets(catches), [catches]);
 
   const filtered = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
 
-    return catches.filter((entry) => {
+    const visible = catches.filter((entry) => {
       const matchesSearch =
         !normalizedSearch ||
         entry.species.toLowerCase().includes(normalizedSearch) ||
@@ -33,11 +38,45 @@ export function CatchLogPage() {
         technique === "all" ||
         (entry.technique ?? "Unspecified").toLowerCase() === technique.toLowerCase();
 
-      return matchesSearch && matchesTechnique;
+      const entryArea = areas.find((bucket) =>
+        entry.lat >= bucket.centerLat - 0.051 &&
+        entry.lat <= bucket.centerLat + 0.051 &&
+        entry.lon >= bucket.centerLon - 0.051 &&
+        entry.lon <= bucket.centerLon + 0.051,
+      );
+
+      const matchesArea = area === "all" || entryArea?.key === area;
+
+      return matchesSearch && matchesTechnique && matchesArea;
     });
-  }, [catches, search, technique]);
+
+    return [...visible].sort((left, right) => {
+      if (sort === "oldest") {
+        return new Date(left.timestamp).getTime() - new Date(right.timestamp).getTime();
+      }
+
+      if (sort === "species") {
+        return left.species.localeCompare(right.species);
+      }
+
+      return new Date(right.timestamp).getTime() - new Date(left.timestamp).getTime();
+    });
+  }, [area, areas, catches, search, sort, technique]);
 
   const techniques = [...new Set(catches.map((entry) => entry.technique).filter(Boolean))] as string[];
+  const selectedArea = areas.find((entry) => entry.key === area);
+  const activeFilters = [
+    search.trim() ? `Search: ${search.trim()}` : null,
+    technique !== "all" ? `Technique: ${technique}` : null,
+    selectedArea ? `Area: ${selectedArea.label}` : null,
+  ].filter(Boolean) as string[];
+
+  function clearFilters() {
+    setSearch("");
+    setTechnique("all");
+    setArea("all");
+    setSort("newest");
+  }
 
   return (
     <div className="space-y-6">
@@ -58,6 +97,11 @@ export function CatchLogPage() {
         technique={technique}
         onTechniqueChange={setTechnique}
         techniques={techniques}
+        area={area}
+        onAreaChange={setArea}
+        areas={areas}
+        sort={sort}
+        onSortChange={setSort}
       />
 
       {catchesQuery.isError ? (
@@ -78,17 +122,55 @@ export function CatchLogPage() {
         </div>
       ) : filtered.length === 0 ? (
         <EmptyState
-          title="Start building your analytical logbook"
-          description="Your catch log will show premium cards, searchable data, and future-ready insights as soon as you record the first catch."
+          title={
+            catches.length === 0
+              ? "Start building your analytical logbook"
+              : "No catches match these filters"
+          }
+          description={
+            catches.length === 0
+              ? "Your catch log will show premium cards, searchable data, and future-ready insights as soon as you record the first catch."
+              : "Try widening the search, clearing filters, or switching the area view to bring more records back into focus."
+          }
           action={
-            <Button asChild>
-              <Link to="/catches/new">Log your first catch</Link>
-            </Button>
+            catches.length === 0 ? (
+              <Button asChild>
+                <Link to="/catches/new">Log your first catch</Link>
+              </Button>
+            ) : (
+              <Button variant="secondary" onClick={clearFilters}>
+                Clear filters
+              </Button>
+            )
           }
         />
       ) : (
-        <Card>
+        <Card className="overflow-hidden">
           <CardContent className="p-6">
+            <div className="mb-6 flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-white/10 bg-black/10 p-5">
+              <div className="space-y-2">
+                <p className="text-kicker">Visible records</p>
+                <h2 className="font-display text-2xl font-semibold">
+                  {filtered.length} of {catches.length} catches in view
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Sort by {sort === "species" ? "species A-Z" : sort === "oldest" ? "oldest first" : "newest first"} and
+                  refine by technique, area, or text search.
+                </p>
+              </div>
+              {activeFilters.length > 0 ? (
+                <div className="flex max-w-xl flex-wrap items-center justify-end gap-2">
+                  {activeFilters.map((entry) => (
+                    <Badge key={entry}>{entry}</Badge>
+                  ))}
+                  <Button variant="ghost" size="sm" onClick={clearFilters}>
+                    Clear all
+                  </Button>
+                </div>
+              ) : (
+                <Badge>No active filters</Badge>
+              )}
+            </div>
             <Tabs defaultValue="cards" className="space-y-6">
               <TabsList>
                 <TabsTrigger value="cards">Card view</TabsTrigger>

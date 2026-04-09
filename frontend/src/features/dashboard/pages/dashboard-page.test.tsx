@@ -19,6 +19,14 @@ vi.mock("../components/dashboard-map-card", () => ({
   DashboardMapCard: (props: { catches: { catch_id: string }[] }) => mockDashboardMapCard(props),
 }));
 
+vi.mock("../components/weather-preview-card", () => ({
+  WeatherPreviewCard: ({
+    targetArea,
+  }: {
+    targetArea?: { label: string } | null;
+  }) => <div data-testid="weather-preview-card">Weather target: {targetArea?.label ?? "none"}</div>,
+}));
+
 vi.mock("recharts", () => ({
   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="responsive-container">{children}</div>
@@ -78,9 +86,13 @@ describe("DashboardPage", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Species recorded")).toBeInTheDocument();
     expect(screen.getByText("Techniques tracked")).toBeInTheDocument();
+    expect(screen.getByText("What your current log is quietly telling you")).toBeInTheDocument();
+    expect(screen.getByText("Top species lately")).toBeInTheDocument();
+    expect(screen.getByText("Most used technique")).toBeInTheDocument();
     expect(screen.getAllByText(/^2$/)).toHaveLength(5);
     expect(screen.getByText("Live")).toBeInTheDocument();
     expect(screen.getByTestId("dashboard-map-card")).toHaveTextContent("Mapped catches: 2");
+    expect(screen.getByTestId("weather-preview-card")).toHaveTextContent("Weather target:");
   });
 
   it("shows the error state when catches cannot be loaded", () => {

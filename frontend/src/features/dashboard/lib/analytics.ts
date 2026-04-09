@@ -4,8 +4,11 @@ import type {
   Catch,
   DashboardSummary,
   DistributionDatum,
+  InsightStat,
 } from "../../../lib/types";
 import { titleCase } from "../../../lib/utils";
+import { buildCatchAreaBuckets } from "../../../lib/catch-areas";
+import { formatShortDate } from "../../../lib/formatters";
 
 export function buildSummary(catches: Catch[]): DashboardSummary {
   const uniqueSpecies = new Set(
@@ -76,4 +79,95 @@ export function buildRecentActivity(catches: Catch[]): ActivityDatum[] {
     ...entry,
     catches: byDate.get(entry.date) ?? 0,
   }));
+}
+
+export function buildActionableInsights(catches: Catch[]): InsightStat[] {
+  return [
+    buildTopSpeciesLatelyInsight(catches),
+    buildTechniqueLeaderInsight(catches),
+    buildBestRecentWindowInsight(catches),
+    buildHotspotPreviewInsight(catches),
+  ];
+}
+
+export function buildTopSpeciesLatelyInsight(catches: Catch[]): InsightStat {
+  const speciesMix = buildSpeciesMix(catches);
+  const leader = speciesMix[0];
+
+  if (!leader) {
+    return {
+      label: "Top species lately",
+      value: "No trend yet",
+      detail: "Log a few catches to see which species is surfacing most often in recent records.",
+    };
+  }
+
+  return {
+    label: "Top species lately",
+    value: leader.label,
+    detail: `${leader.value} catches recorded in your recent log history.`,
+  };
+}
+
+export function buildTechniqueLeaderInsight(catches: Catch[]): InsightStat {
+  const techniqueMix = buildTechniqueMix(catches);
+  const leader = techniqueMix[0];
+
+  if (!leader) {
+    return {
+      label: "Most used technique",
+      value: "No pattern yet",
+      detail: "Add technique notes to catch records to see which approach shows up most often.",
+    };
+  }
+
+  return {
+    label: "Most used technique",
+    value: leader.label,
+    detail: `${leader.value} catches logged with this method so far.`,
+  };
+}
+
+export function buildBestRecentWindowInsight(catches: Catch[]): InsightStat {
+  const activity = buildRecentActivity(catches);
+  const bestDay = [...activity]
+    .sort((a, b) => b.catches - a.catches)
+    .find((entry) => entry.catches > 0);
+
+  if (!bestDay) {
+    return {
+      label: "Best recent window",
+      value: "Still forming",
+      detail: "Once catches land in the last seven days, this card will highlight your busiest recent window.",
+    };
+  }
+
+  const dayLabel = formatShortDate(bestDay.date);
+  const catchLabel = bestDay.catches === 1 ? "catch" : "catches";
+
+  return {
+    label: "Best recent window",
+    value: dayLabel,
+    detail: `${bestDay.catches} ${catchLabel} landed on this day based on your recent logs.`,
+  };
+}
+
+export function buildHotspotPreviewInsight(catches: Catch[]): InsightStat {
+  const hotspot = buildCatchAreaBuckets(catches)[0];
+
+  if (!hotspot) {
+    return {
+      label: "Hotspot preview",
+      value: "No hotspot yet",
+      detail: "Repeated locations will surface here once multiple catches cluster in the same area.",
+    };
+  }
+
+  const catchLabel = hotspot.count === 1 ? "entry" : "entries";
+
+  return {
+    label: "Hotspot preview",
+    value: hotspot.label,
+    detail: `${hotspot.count} ${catchLabel} cluster around this area in your current log.`,
+  };
 }

@@ -40,3 +40,35 @@ export interface ActivityDatum {
   date: string;
   catches: number;
 }
+
+export interface InsightStat {
+  label: string;
+  value: string;
+  detail: string;
+}
+
+export interface CatchAreaBucket {
+  key: string;
+  label: string;
+  count: number;
+  centerLat: number;
+  centerLon: number;
+  latestTimestamp: string;
+}
+
+export interface WeatherForecastEntry {
+  date: string;
+  condition: string;
+  temperatureMax: number;
+  windSpeedMax: number;
+  precipitationProbability: number;
+  pressureMean: number;
+  guidance: "Good" | "Mixed" | "Poor";
+}
+
+export interface WeatherForecast {
+  areaLabel: string;
+  latitude: number;
+  longitude: number;
+  entries: WeatherForecastEntry[];
+}
