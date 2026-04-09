@@ -22,6 +22,9 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
 
+      - name: Sync dependencies
+        run: uv sync --dev
+
       - name: Lint with Ruff
         run: uv run ruff check .
 
@@ -44,6 +47,9 @@ jobs:
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
+
+      - name: Sync dependencies
+        run: uv sync --dev
 
       - name: Run tests
         run: uv run python -m pytest tests/
