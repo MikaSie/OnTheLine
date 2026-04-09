@@ -1,115 +1,127 @@
 # OnTheLine
 
-A fishing tool built by fishermen, for fishermen — to track catches and analyze shared data.
+A backend-first fishing log built to record catches with location and metadata, validate the data cleanly, and store it for future analysis.
 
 <p align="center">
-  <img src="docs/media/OnTheLine_Logo_no_bg.png" width="350">
+  <img src="docs/media/OnTheLine_Logo_no_bg.png" width="350" alt="OnTheLine logo">
 </p>
 
 ## Overview
 
-OnTheLine is a backend-first application designed to:
+OnTheLine is a Flask API for logging fishing catches. The current codebase focuses on clean backend architecture, domain validation, and SQLite persistence so it can later support web and mobile clients.
 
-- track fishing catches with location and metadata
-- structure and store fishing data cleanly
-- enable future data analysis and insights
-- serve as a foundation for future web and mobile applications
+## Current Stack
+
+- Python 3.11+
+- Flask
+- Pydantic
+- SQLAlchemy
+- SQLite
+- pytest
+- Ruff
+- uv
 
 ## Architecture
 
-The project follows a layered architecture to keep the codebase scalable and maintainable.
+The app follows a layered structure:
 
-    OnTheLine/
-    ├── app/
-    │   ├── api/               # HTTP layer (Flask routes)
-    │   ├── core/              # Domain logic & configuration
-    │   ├── schemas/           # API data shapes
-    │   ├── services/          # Application logic (use cases)
-    │   ├── repositories/      # Data access layer
-    │   └── main.py            # App entrypoint
-    ├── docs/                  # Static assets (logo, media)
-    ├── scripts/               # (future) utility scripts
-    ├── tests/                 # (future) tests
-    ├── LICENSE                # License
-    ├── pyproject.toml         # Dependencies
-    ├── uv.lock                # Lockfile
-    └── README.md
+```text
+Request
+  -> API routes
+  -> Pydantic schemas
+  -> service layer
+  -> domain entity validation
+  -> SQLAlchemy models/session
+  -> SQLite database
+```
 
-## Data Flow
+Project layout:
 
-    Request → API → Service → Repository → Storage
-                             ↓
-                          Core (domain logic)
+```text
+OnTheLine/
+├── app/
+│   ├── api/         # Flask routes
+│   ├── core/        # config, logging, domain entity
+│   ├── db/          # SQLAlchemy models and session
+│   ├── schemas/     # request/response schemas
+│   ├── services/    # application use cases
+│   └── main.py      # app entrypoint
+├── docs/
+├── tests/
+├── pyproject.toml
+├── uv.lock
+└── README.md
+```
 
-## Design Principles
+## Features
 
-- separation of concerns
-- framework-independent core logic
-- scalable structure
-- incremental development
+- Create catches with generated ID and timestamp
+- Validate latitude and longitude ranges in the domain layer
+- Store catches in SQLite
+- List all catches
+- Fetch a catch by ID
+- Update an existing catch
+- Delete a catch
+- Test coverage for core, service, and API behavior
 
-## Mental model for myself:
+## API Endpoints
 
-Schema
-
-- “What does the API accept/return?”
-
-Core
-
-- “What is a valid catch in my app?”
-
-DB model
-
-- “How is a catch stored in SQLite?”
-
-Service
-
-- “What actions can the app perform with catches?”
+- `GET /` - health-style home route
+- `POST /catches` - create a catch
+- `GET /catches` - list catches
+- `GET /catches/<catch_id>` - fetch one catch
+- `PUT /catches/<catch_id>` - update one catch
+- `DELETE /catches/<catch_id>` - delete one catch
 
 ## Getting Started
 
-Run the application from the project root:
+Install dependencies from the project root:
 
-    python -m app.main
+```bash
+uv sync
+```
 
-Then open:
+Run the app:
 
-    http://127.0.0.1:5000
+```bash
+uv run python -m app.main
+```
 
-## Current Features
+Open:
 
-- [x] Catch domain model in core
-- [x] Catch creation with validation
-- [x] Flask API endpoints
-- [x] Service layer
-- [x] In-memory storage
-- [x] Architecture separation (API / Service / Core / Schemas)
-- [x] Catch lookup by ID
+```text
+http://127.0.0.1:5000
+```
 
-## To-Do
+## Development
 
-### Next Steps
+Run linting:
 
-- [ ] Add SQLite database
-- [ ] Replace in-memory storage with persistent repository logic
-- [ ] Implement SQLAlchemy models and database session setup
-- [ ] Add update and delete endpoints
-- [ ] Add filtering by species, location, or technique
+```bash
+uv run ruff check .
+```
 
-### Future Ideas
+Run tests:
 
-- [ ] User system and authentication
-- [ ] Fishing session tracking
-- [ ] AI-based fish detection
-- [ ] Weather and tide integration
-- [ ] Data analytics dashboard
-- [ ] Web client
-- [ ] Mobile client
+```bash
+uv run python -m pytest tests/
+```
 
 ## Notes
 
-This project is focused on building a clean backend architecture first, before expanding into frontend applications.
+- The SQLite database file is created under `app/db/`.
+- Tables are created automatically on app startup.
+- The README is intentionally aligned with the code as it exists today, not with older planned architecture notes.
+
+## Future Ideas
+
+- Filtering by species, location, or technique
+- User accounts and authentication
+- Fishing session tracking
+- Analytics and dashboards
+- Web UI
+- Mobile UI
 
 ## License
 
-See the LICENSE file for details.
+See [`LICENSE`](LICENSE).
