@@ -1,0 +1,63 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --background: 220 30% 7%;
+    --foreground: 210 20% 96%;
+    --card: 218 29% 10%;
+    --card-foreground: 210 20% 96%;
+    --panel: 216 26% 12%;
+    --panel-foreground: 210 20% 96%;
+    --primary: 353 75% 44%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 213 20% 22%;
+    --secondary-foreground: 210 20% 96%;
+    --muted: 217 18% 16%;
+    --muted-foreground: 212 14% 70%;
+    --accent: 212 17% 18%;
+    --accent-foreground: 210 20% 96%;
+    --destructive: 358 74% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 17% 20%;
+    --input: 215 17% 18%;
+    --ring: 353 75% 44%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply min-h-screen bg-background font-sans text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at top left, rgba(193, 30, 49, 0.12), transparent 25%),
+      radial-gradient(circle at 85% 10%, rgba(87, 105, 124, 0.18), transparent 22%),
+      linear-gradient(180deg, rgba(7, 10, 17, 1), rgba(10, 13, 21, 1));
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-2xl border border-white/10 bg-panel/80 shadow-panel backdrop-blur;
+  }
+
+  .panel-grid {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .text-kicker {
+    @apply text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground;
+  }
+}
