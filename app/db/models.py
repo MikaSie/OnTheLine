@@ -1,6 +1,7 @@
-from sqlalchemy import String, Float, DateTime
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from datetime import datetime
+
+from sqlalchemy import DateTime, Float, String
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 # This is how a catch is stored in the database table
 

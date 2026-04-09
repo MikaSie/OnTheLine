@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
+
 from app.db.session import SessionLocal
 from app.schemas.catch_schema import CatchCreate, CatchRead
-from app.services.catch_service import CatchService, UNSET
+from app.services.catch_service import UNSET, CatchService
 
 routes = Blueprint("routes", __name__)
 

@@ -1,7 +1,8 @@
 from flask import Flask
+
+from app.api.routes import routes
 from app.core.config import config
 from app.core.logging import setup_logging
-from app.api.routes import routes
 from app.db.models import Base
 from app.db.session import engine
 
