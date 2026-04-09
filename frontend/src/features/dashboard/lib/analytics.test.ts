@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { buildRecentActivity, buildSpeciesMix, buildSummary } from "./analytics";
+import {
+  buildActionableInsights,
+  buildHotspotPreviewInsight,
+  buildRecentActivity,
+  buildSpeciesMix,
+  buildSummary,
+} from "./analytics";
 
 const catches = [
   {
@@ -24,8 +30,8 @@ const catches = [
   {
     catch_id: "3",
     timestamp: "2026-04-09T12:00:00Z",
-    lat: 52.2,
-    lon: 4.2,
+    lat: 52.02,
+    lon: 4.03,
     species: "Sea Trout",
     technique: "Spinning",
     notes: null,
@@ -53,5 +59,21 @@ describe("analytics builders", () => {
 
     expect(activity).toHaveLength(7);
     expect(activity.some((entry) => entry.catches > 0)).toBe(true);
+  });
+
+  it("builds actionable insight cards", () => {
+    const insights = buildActionableInsights(catches);
+
+    expect(insights).toHaveLength(4);
+    expect(insights[0]?.value).toBe("Sea Trout");
+    expect(insights[1]?.value).toBe("Spinning");
+  });
+
+  it("summarizes the strongest hotspot", () => {
+    const hotspot = buildHotspotPreviewInsight(catches);
+
+    expect(hotspot.label).toBe("Hotspot preview");
+    expect(hotspot.value).toContain("area");
+    expect(hotspot.detail).toContain("2 entries");
   });
 });

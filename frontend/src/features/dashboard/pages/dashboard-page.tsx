@@ -8,13 +8,16 @@ import { Card, CardContent } from "../../../components/ui/card";
 import { Skeleton } from "../../../components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 import { formatDateTime, formatShortDate } from "../../../lib/formatters";
+import { buildCatchAreaBuckets } from "../../../lib/catch-areas";
 import { useCatches } from "../../catches/hooks/use-catches";
 import { QuickActionPanel } from "../../catches/components/quick-action-panel";
 import { ActivityTimeline } from "../components/activity-timeline";
+import { DecisionSupportCard } from "../components/decision-support-card";
 import { DashboardMapCard } from "../components/dashboard-map-card";
 import { InsightChartCard } from "../components/insight-chart-card";
 import { MetricCard } from "../components/metric-card";
-import { buildRecentActivity, buildSpeciesMix, buildSummary, buildTechniqueMix } from "../lib/analytics";
+import { WeatherPreviewCard } from "../components/weather-preview-card";
+import { buildActionableInsights, buildRecentActivity, buildSpeciesMix, buildSummary, buildTechniqueMix } from "../lib/analytics";
 
 const chartColors = ["#c11e31", "#f97316", "#64748b", "#0f766e", "#a855f7"];
 
@@ -56,6 +59,8 @@ export function DashboardPage() {
   const speciesMix = buildSpeciesMix(catches);
   const techniqueMix = buildTechniqueMix(catches);
   const recentActivity = buildRecentActivity(catches);
+  const actionableInsights = buildActionableInsights(catches);
+  const hotspotArea = buildCatchAreaBuckets(catches)[0] ?? null;
 
   return (
     <div className="space-y-10">
@@ -142,6 +147,10 @@ export function DashboardPage() {
           icon={<Radar className="h-5 w-5" />}
         />
       </div>
+
+      <WeatherPreviewCard targetArea={hotspotArea} />
+
+      <DecisionSupportCard insights={actionableInsights} />
 
       <DashboardMapCard catches={catches} />
 

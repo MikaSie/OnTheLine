@@ -10,6 +10,11 @@ interface CatchFiltersProps {
   technique: string;
   onTechniqueChange: (value: string) => void;
   techniques: string[];
+  area: string;
+  onAreaChange: (value: string) => void;
+  areas: Array<{ key: string; label: string; count: number }>;
+  sort: string;
+  onSortChange: (value: string) => void;
 }
 
 export function CatchFilters({
@@ -18,9 +23,14 @@ export function CatchFilters({
   technique,
   onTechniqueChange,
   techniques,
+  area,
+  onAreaChange,
+  areas,
+  sort,
+  onSortChange,
 }: CatchFiltersProps) {
   return (
-    <div className="grid gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 lg:grid-cols-[1.8fr_1fr]">
+    <div className="grid gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 xl:grid-cols-[1.7fr_1fr_1fr_1fr]">
       <div className="space-y-2">
         <Label htmlFor="search">Search species or notes</Label>
         <div className="relative">
@@ -37,7 +47,7 @@ export function CatchFilters({
       <div className="space-y-2">
         <Label>Technique filter</Label>
         <Select value={technique} onValueChange={onTechniqueChange}>
-          <SelectTrigger>
+          <SelectTrigger aria-label="Technique filter">
             <SelectValue placeholder="All techniques" />
           </SelectTrigger>
           <SelectContent>
@@ -47,6 +57,35 @@ export function CatchFilters({
                 {entry}
               </SelectItem>
             ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label>Area filter</Label>
+        <Select value={area} onValueChange={onAreaChange}>
+          <SelectTrigger aria-label="Area filter">
+            <SelectValue placeholder="All areas" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All areas</SelectItem>
+            {areas.map((entry) => (
+              <SelectItem key={entry.key} value={entry.key}>
+                {entry.label} ({entry.count})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label>Sort by</Label>
+        <Select value={sort} onValueChange={onSortChange}>
+          <SelectTrigger aria-label="Sort catches">
+            <SelectValue placeholder="Newest first" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">Newest first</SelectItem>
+            <SelectItem value="oldest">Oldest first</SelectItem>
+            <SelectItem value="species">Species A-Z</SelectItem>
           </SelectContent>
         </Select>
       </div>
