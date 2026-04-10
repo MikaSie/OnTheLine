@@ -10,6 +10,7 @@ const mockCreateMutate = vi.fn();
 const mockUpdateMutate = vi.fn();
 const mockUseParams = vi.fn(() => ({}));
 const mockUseCatch = vi.fn();
+const mockUseSpeciesOptions = vi.fn();
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual<typeof import("react-router-dom")>(
@@ -29,6 +30,7 @@ vi.mock("../../../components/ui/toaster", () => ({
 
 vi.mock("../hooks/use-catches", () => ({
   useCatch: (...args: unknown[]) => mockUseCatch(...args),
+  useSpeciesOptions: (...args: unknown[]) => mockUseSpeciesOptions(...args),
   useCreateCatch: (options?: { onSuccess?: (entry: { catch_id: string }) => void }) => ({
     isPending: false,
     mutate: (payload: unknown) => {
@@ -93,11 +95,16 @@ describe("CatchFormPage", () => {
     mockUpdateMutate.mockReset();
     mockUseParams.mockReset();
     mockUseCatch.mockReset();
+    mockUseSpeciesOptions.mockReset();
     mockUseParams.mockReturnValue({});
     mockUseCatch.mockReturnValue({
       isLoading: false,
       isError: false,
       data: undefined,
+    });
+    mockUseSpeciesOptions.mockReturnValue({
+      isLoading: false,
+      data: ["Perch", "Pike", "Sea Bass", "Sea Trout"],
     });
   });
 

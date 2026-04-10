@@ -48,13 +48,15 @@ describe("CatchForm", () => {
       <CatchForm
         mode="create"
         isSubmitting={false}
+        speciesOptions={["Perch", "Pike", "Sea Bass", "Sea Trout"]}
         onSubmit={onSubmit}
       />,
     );
 
     await user.type(screen.getByLabelText("Latitude"), "52,3676");
     await user.type(screen.getByLabelText("Longitude"), "4,9041");
-    await user.type(screen.getByLabelText("Species"), "Sea Trout");
+    await user.click(screen.getByRole("combobox", { name: "Species" }));
+    await user.click(screen.getByRole("option", { name: "Sea Trout" }));
     await user.click(screen.getByRole("button", { name: "Log catch" }));
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
@@ -78,6 +80,7 @@ describe("CatchForm", () => {
       <CatchForm
         mode="create"
         isSubmitting={false}
+        speciesOptions={["Perch", "Pike", "Sea Bass", "Sea Trout"]}
         onSubmit={onSubmit}
       />,
     );
@@ -89,7 +92,8 @@ describe("CatchForm", () => {
     expect(screen.getByText("New place")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Confirm new location" }));
-    await user.type(screen.getByLabelText("Species"), "Sea Bass");
+    await user.click(screen.getByRole("combobox", { name: "Species" }));
+    await user.click(screen.getByRole("option", { name: "Sea Bass" }));
     await user.click(screen.getByRole("button", { name: "Log catch" }));
 
     expect(onSubmit).toHaveBeenCalledWith(
@@ -109,6 +113,7 @@ describe("CatchForm", () => {
       <CatchForm
         mode="create"
         isSubmitting={false}
+        speciesOptions={["Perch", "Pike", "Sea Bass", "Sea Trout"]}
         onSubmit={vi.fn()}
       />,
     );
@@ -124,6 +129,7 @@ describe("CatchForm", () => {
       <CatchForm
         mode="edit"
         isSubmitting={false}
+        speciesOptions={["Perch", "Pike", "Sea Bass", "Sea Trout"]}
         onSubmit={vi.fn()}
         initialValues={{
           catch_id: "catch-1",
@@ -149,6 +155,7 @@ describe("CatchForm", () => {
       <CatchForm
         mode="edit"
         isSubmitting={false}
+        speciesOptions={["Perch", "Pike", "Sea Bass", "Sea Trout"]}
         onSubmit={vi.fn()}
         initialValues={{
           catch_id: "catch-1",

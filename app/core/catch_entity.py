@@ -3,6 +3,8 @@ from datetime import datetime, timezone
 from typing import Optional
 from uuid import uuid4
 
+from app.core.reference_data import normalize_species
+
 # Actual domain concept
 
 
@@ -60,6 +62,11 @@ class CatchEntity:
             raise ValueError("length_cm must be greater than 0")
 
         species = species.strip()
+
+        if not species:
+            raise ValueError("Species is required")
+
+        species = normalize_species(species)
 
         created_at = created_at or datetime.now(timezone.utc)
         caught_at = caught_at or created_at

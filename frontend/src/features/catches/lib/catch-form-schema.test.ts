@@ -19,6 +19,7 @@ describe("catchFormSchema", () => {
     const result = catchFormSchema.safeParse({
       lat: 120,
       lon: 4.9,
+      species: "Sea Trout",
     });
 
     expect(result.success).toBe(false);
@@ -28,6 +29,7 @@ describe("catchFormSchema", () => {
     const result = catchFormSchema.safeParse({
       lat: "",
       lon: "",
+      species: "",
     });
 
     expect(result.success).toBe(false);
@@ -42,6 +44,7 @@ describe("catchFormSchema", () => {
     const result = catchFormSchema.safeParse({
       lat: "52,3676",
       lon: "4,9041",
+      species: "Sea Trout",
     });
 
     expect(result.success).toBe(true);
@@ -49,6 +52,20 @@ describe("catchFormSchema", () => {
     if (result.success) {
       expect(result.data.lat).toBeCloseTo(52.3676);
       expect(result.data.lon).toBeCloseTo(4.9041);
+    }
+  });
+
+  it("requires a species selection", () => {
+    const result = catchFormSchema.safeParse({
+      lat: 52.37,
+      lon: 4.9,
+      species: "",
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.flatten().fieldErrors.species).toContain("Species is required");
     }
   });
 });

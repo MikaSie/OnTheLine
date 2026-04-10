@@ -6,6 +6,7 @@ import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { Textarea } from "../../../components/ui/textarea";
 import type { Catch } from "../../../lib/types";
 import { toMapPoint } from "../../maps/lib/map-utils";
@@ -16,6 +17,7 @@ interface CatchFormProps {
   mode: "create" | "edit";
   initialValues?: Catch;
   isSubmitting: boolean;
+  speciesOptions: string[];
   onSubmit: (values: CatchFormValues) => void;
 }
 
@@ -23,6 +25,7 @@ export function CatchForm({
   mode,
   initialValues,
   isSubmitting,
+  speciesOptions,
   onSubmit,
 }: CatchFormProps) {
   const form = useForm<CatchFormValues>({
@@ -46,6 +49,7 @@ export function CatchForm({
   } = form;
 
   const selectedPoint = toMapPoint(watch("lat"), watch("lon"));
+  const selectedSpecies = watch("species");
 
   useEffect(() => {
     reset({
@@ -78,15 +82,32 @@ export function CatchForm({
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="species" className="text-base font-semibold">
+                <Label className="text-base font-semibold">
                   Species
                 </Label>
-                <Input
-                  id="species"
-                  className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
-                  placeholder="Sea trout"
-                  {...register("species")}
-                />
+                <Select
+                  value={selectedSpecies}
+                  onValueChange={(value) =>
+                    setValue("species", value, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    })
+                  }
+                >
+                  <SelectTrigger
+                    aria-label="Species"
+                    className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
+                  >
+                    <SelectValue placeholder="Select species" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {speciesOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {errors.species ? (
                   <p className="text-sm text-destructive">{errors.species.message}</p>
                 ) : null}

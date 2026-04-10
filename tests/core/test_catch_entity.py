@@ -31,6 +31,7 @@ def test_create_catch_uses_given_created_at():
     catch = CatchEntity.new(
         lat=52.0,
         lon=4.0,
+        species="Perch",
         created_at=fixed_time,
     )
 
@@ -41,6 +42,7 @@ def test_create_created_at_when_omitted():
     catch = CatchEntity.new(
         lat=52.0,
         lon=4.0,
+        species="Perch",
     )
 
     assert isinstance(catch.created_at, datetime)
@@ -50,6 +52,7 @@ def test_create_catch_defaults_caught_at_to_created_at():
     catch = CatchEntity.new(
         lat=52.0,
         lon=4.0,
+        species="Perch",
     )
 
     assert catch.caught_at == catch.created_at
@@ -62,6 +65,7 @@ def test_create_catch_uses_given_caught_at():
     catch = CatchEntity.new(
         lat=52.0,
         lon=4.0,
+        species="Perch",
         created_at=fixed_created_at,
         caught_at=fixed_caught_at,
     )
@@ -74,6 +78,7 @@ def test_convert_lat_lon_to_float():
     catch = CatchEntity.new(
         lat=52,
         lon=4,
+        species="Perch",
     )
 
     assert isinstance(catch.lat, float)
@@ -93,8 +98,8 @@ def test_species_is_stripped():
 
 
 def test_latitude_accepts_boundary_values():
-    catch_min = CatchEntity.new(lat=-90, lon=4.0)
-    catch_max = CatchEntity.new(lat=90, lon=4.0)
+    catch_min = CatchEntity.new(lat=-90, lon=4.0, species="Perch")
+    catch_max = CatchEntity.new(lat=90, lon=4.0, species="Perch")
 
     assert catch_min.lat == -90.0
     assert catch_max.lat == 90.0
@@ -105,6 +110,7 @@ def test_latitude_below_range_raises_error():
         CatchEntity.new(
             lat=-100,
             lon=4.0,
+            species="Perch",
         )
 
 
@@ -113,12 +119,13 @@ def test_latitude_above_range_raises_error():
         CatchEntity.new(
             lat=100,
             lon=4.0,
+            species="Perch",
         )
 
 
 def test_longitude_accepts_boundary_values():
-    catch_min = CatchEntity.new(lat=52.0, lon=-180)
-    catch_max = CatchEntity.new(lat=52.0, lon=180)
+    catch_min = CatchEntity.new(lat=52.0, lon=-180, species="Perch")
+    catch_max = CatchEntity.new(lat=52.0, lon=180, species="Perch")
 
     assert catch_min.lon == -180.0
     assert catch_max.lon == 180.0
@@ -129,6 +136,7 @@ def test_longitude_below_range_raises_error():
         CatchEntity.new(
             lat=52.0,
             lon=-190.0,
+            species="Perch",
         )
 
 
@@ -137,6 +145,7 @@ def test_longitude_above_range_raises_error():
         CatchEntity.new(
             lat=52.0,
             lon=190.0,
+            species="Perch",
         )
 
 
@@ -155,6 +164,7 @@ def test_technique_detail_must_be_string_or_none():
             lat=52.0,
             lon=4.0,
             technique_detail=123,
+            species="Perch",
         )
 
 
@@ -162,6 +172,7 @@ def test_technique_detail_can_be_none():
     catch = CatchEntity.new(
         lat=52.0,
         lon=4.0,
+        species="Perch",
         technique_detail=None,
     )
 
@@ -172,6 +183,7 @@ def test_length_cm_is_converted_to_float():
     catch = CatchEntity.new(
         lat=52.0,
         lon=4.0,
+        species="Perch",
         length_cm=63,
     )
 
@@ -182,6 +194,7 @@ def test_length_cm_can_be_none():
     catch = CatchEntity.new(
         lat=52.0,
         lon=4.0,
+        species="Perch",
         length_cm=None,
     )
 
@@ -193,6 +206,7 @@ def test_length_cm_must_be_number_or_none():
         CatchEntity.new(
             lat=52.0,
             lon=4.0,
+            species="Perch",
             length_cm="big one",
         )
 
@@ -202,6 +216,7 @@ def test_length_cm_must_be_greater_than_zero():
         CatchEntity.new(
             lat=52.0,
             lon=4.0,
+            species="Perch",
             length_cm=0,
         )
 
@@ -211,6 +226,7 @@ def test_notes_must_be_string_or_none():
         CatchEntity.new(
             lat=52.0,
             lon=4.0,
+            species="Perch",
             notes=123,
         )
 
@@ -219,7 +235,28 @@ def test_notes_can_be_none():
     catch = CatchEntity.new(
         lat=52.0,
         lon=4.0,
+        species="Perch",
         notes=None,
     )
 
     assert catch.notes is None
+
+
+def test_species_is_required():
+    with pytest.raises(ValueError, match="Species is required"):
+        CatchEntity.new(
+            lat=52.0,
+            lon=4.0,
+            species="",
+        )
+
+
+def test_species_must_be_in_supported_list():
+    with pytest.raises(
+        ValueError, match="Species must be selected from the supported species list"
+    ):
+        CatchEntity.new(
+            lat=52.0,
+            lon=4.0,
+            species="Golden Trevally",
+        )

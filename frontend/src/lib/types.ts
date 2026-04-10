@@ -13,7 +13,7 @@ export interface Catch {
 export interface CreateCatchInput {
   lat: number;
   lon: number;
-  species?: string;
+  species: string;
   caught_at?: string | null;
   length_cm?: number | null;
   technique_detail?: string | null;

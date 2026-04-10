@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict
 class CatchCreate(BaseModel):
     lat: float
     lon: float
-    species: str = ""
+    species: str
     caught_at: datetime | None = None
     length_cm: float | None = None
     technique_detail: str | None = None

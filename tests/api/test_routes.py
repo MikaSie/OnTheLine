@@ -28,12 +28,20 @@ def test_home_returns_running_message(client):
     assert response.get_json() == {"message": "Fishing log API is running"}
 
 
+def test_get_species_options_returns_200(client):
+    response = client.get("/reference-data/species")
+
+    assert response.status_code == 200
+    assert "Perch" in response.get_json()
+    assert "Sea Bass" in response.get_json()
+
+
 def test_create_catch_returns_201(client):
     fake_created_catch = CatchEntity.new(
         created_at=datetime.now(timezone.utc),
         lat=52.0,
         lon=4.0,
-        species="Seabass",
+        species="Sea Bass",
         length_cm=63,
         technique_detail="Jig",
         notes="Nice fish",
@@ -53,7 +61,7 @@ def test_create_catch_returns_201(client):
             json={
                 "lat": 52.0,
                 "lon": 4.0,
-                "species": "Seabass",
+                "species": "Sea Bass",
                 "technique_detail": "Jig",
                 "notes": "Nice fish",
             },
@@ -66,7 +74,7 @@ def test_create_catch_returns_201(client):
     assert "catch_id" in data
     assert data["lat"] == 52.0
     assert data["lon"] == 4.0
-    assert data["species"] == "Seabass"
+    assert data["species"] == "Sea Bass"
     assert data["length_cm"] == 63.0
     assert data["technique_detail"] == "Jig"
     assert data["notes"] == "Nice fish"
@@ -74,7 +82,7 @@ def test_create_catch_returns_201(client):
     mock_service_instance.create_catch.assert_called_once_with(
         lat=52.0,
         lon=4.0,
-        species="Seabass",
+        species="Sea Bass",
         caught_at=None,
         length_cm=None,
         technique_detail="Jig",
@@ -89,7 +97,7 @@ def test_create_catch_returns_201_through_given_caught_at(client):
         created_at=datetime.now(timezone.utc),
         lat=52.0,
         lon=4.0,
-        species="Seabass",
+        species="Sea Bass",
         caught_at=provided_caught_at,
         technique_detail="Jig",
         notes="Nice fish",
@@ -109,7 +117,7 @@ def test_create_catch_returns_201_through_given_caught_at(client):
             json={
                 "lat": 52.0,
                 "lon": 4.0,
-                "species": "Seabass",
+                "species": "Sea Bass",
                 "caught_at": "2026-04-08T08:45:00Z",
                 "technique_detail": "Jig",
                 "notes": "Nice fish",
@@ -123,7 +131,7 @@ def test_create_catch_returns_201_through_given_caught_at(client):
     called_kwargs = mock_service_instance.create_catch.call_args.kwargs
     assert called_kwargs["lat"] == 52.0
     assert called_kwargs["lon"] == 4.0
-    assert called_kwargs["species"] == "Seabass"
+    assert called_kwargs["species"] == "Sea Bass"
     assert called_kwargs["caught_at"].isoformat() == provided_caught_at.isoformat()
     assert called_kwargs["length_cm"] is None
     assert called_kwargs["technique_detail"] == "Jig"
@@ -136,7 +144,7 @@ def test_create_catch_returns_201_through_given_length_cm(client):
         created_at=datetime.now(timezone.utc),
         lat=52.0,
         lon=4.0,
-        species="Seabass",
+        species="Sea Bass",
         length_cm=71.5,
         technique_detail="Jig",
         notes="Nice fish",
@@ -156,7 +164,7 @@ def test_create_catch_returns_201_through_given_length_cm(client):
             json={
                 "lat": 52.0,
                 "lon": 4.0,
-                "species": "Seabass",
+                "species": "Sea Bass",
                 "length_cm": 71.5,
                 "technique_detail": "Jig",
                 "notes": "Nice fish",
@@ -169,7 +177,7 @@ def test_create_catch_returns_201_through_given_length_cm(client):
     mock_service_instance.create_catch.assert_called_once_with(
         lat=52.0,
         lon=4.0,
-        species="Seabass",
+        species="Sea Bass",
         caught_at=None,
         length_cm=71.5,
         technique_detail="Jig",
@@ -205,7 +213,7 @@ def test_create_catch_returns_400_missing_lon(client):
             "/catches",
             json={
                 "lat": 52.0,
-                "species": "Seabass",
+                "species": "Sea Bass",
                 "technique_detail": "Jig",
                 "notes": "Nice fish",
             },
@@ -227,7 +235,7 @@ def test_create_catch_returns_400_missing_lat(client):
             "/catches",
             json={
                 "lon": 4.0,
-                "species": "Seabass",
+                "species": "Sea Bass",
                 "technique_detail": "Jig",
                 "notes": "Nice fish",
             },
@@ -235,6 +243,28 @@ def test_create_catch_returns_400_missing_lat(client):
 
     assert response.status_code == 400
     assert response.get_json() == {"error": "Fields 'lat' and 'lon' are required"}
+
+    mock_session.assert_not_called()
+    mock_service.assert_not_called()
+
+
+def test_create_catch_returns_400_missing_species(client):
+    with (
+        patch("app.api.routes.SessionLocal") as mock_session,
+        patch("app.api.routes.CatchService") as mock_service,
+    ):
+        response = client.post(
+            "/catches",
+            json={
+                "lat": 52.0,
+                "lon": 4.0,
+                "technique_detail": "Jig",
+                "notes": "Nice fish",
+            },
+        )
+
+    assert response.status_code == 400
+    assert response.get_json() == {"error": "Field 'species' is required"}
 
     mock_session.assert_not_called()
     mock_service.assert_not_called()
@@ -255,7 +285,7 @@ def test_create_catch_returns_400_invalid_float_conversion(client):
             json={
                 "lat": "WRONG",
                 "lon": 4.0,
-                "species": "Seabass",
+                "species": "Sea Bass",
                 "technique_detail": "Jig",
                 "notes": "Nice fish",
             },
@@ -314,7 +344,7 @@ def test_create_catch_returns_400_invalid_technique_detail_type(client):
             json={
                 "lat": 52.0,
                 "lon": 4.0,
-                "species": "Seabass",
+                "species": "Sea Bass",
                 "technique_detail": 5,
                 "notes": "Nice fish",
             },
@@ -344,7 +374,7 @@ def test_create_catch_returns_400_invalid_notes_type(client):
             json={
                 "lat": 52.0,
                 "lon": 4.0,
-                "species": "Seabass",
+                "species": "Sea Bass",
                 "technique_detail": "Jig",
                 "notes": 5,
             },
@@ -374,7 +404,7 @@ def test_create_catch_returns_400_invalid_length_cm_type(client):
             json={
                 "lat": 52.0,
                 "lon": 4.0,
-                "species": "Seabass",
+                "species": "Sea Bass",
                 "length_cm": "long",
                 "technique_detail": "Jig",
                 "notes": "Nice fish",
@@ -395,7 +425,7 @@ def test_get_catches_returns_200(client):
         created_at=datetime.now(timezone.utc),
         lat=52.0,
         lon=4.0,
-        species="Seabass",
+        species="Sea Bass",
         technique_detail="Jig",
         notes="Nice fish",
     )
@@ -404,7 +434,7 @@ def test_get_catches_returns_200(client):
         created_at=datetime.now(timezone.utc),
         lat=62.0,
         lon=14.0,
-        species="Sea trout",
+        species="Sea Trout",
         technique_detail="Spinner",
         notes="Good fight",
     )
@@ -432,10 +462,10 @@ def test_get_catches_returns_200(client):
     assert len(data) == 2
 
     assert data[0]["catch_id"] == fake_created_catch_1.catch_id
-    assert data[0]["species"] == "Seabass"
+    assert data[0]["species"] == "Sea Bass"
 
     assert data[1]["catch_id"] == fake_created_catch_2.catch_id
-    assert data[1]["species"] == "Sea trout"
+    assert data[1]["species"] == "Sea Trout"
 
     mock_service_instance.list_catches.assert_called_once_with()
     mock_session.assert_called_once()
@@ -475,7 +505,7 @@ def test_get_catch_returns_200(client):
         created_at=datetime.now(timezone.utc),
         lat=52.0,
         lon=4.0,
-        species="Seabass",
+        species="Sea Bass",
         technique_detail="Jig",
         notes="Nice fish",
     )

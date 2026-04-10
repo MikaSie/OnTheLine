@@ -25,6 +25,9 @@ export const api = {
   getHealth() {
     return request<{ message: string }>("/");
   },
+  getSpeciesOptions() {
+    return request<string[]>("/reference-data/species");
+  },
   listCatches() {
     return request<Catch[]>("/catches");
   },

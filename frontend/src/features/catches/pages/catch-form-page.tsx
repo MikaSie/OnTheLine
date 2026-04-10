@@ -5,7 +5,12 @@ import { SectionHeader } from "../../../components/common/section-header";
 import { Button } from "../../../components/ui/button";
 import { Skeleton } from "../../../components/ui/skeleton";
 import { useToast } from "../../../components/ui/toaster";
-import { useCatch, useCreateCatch, useUpdateCatch } from "../hooks/use-catches";
+import {
+  useCatch,
+  useCreateCatch,
+  useSpeciesOptions,
+  useUpdateCatch,
+} from "../hooks/use-catches";
 import type { CatchFormValues } from "../lib/catch-form-schema";
 import { CatchForm } from "../components/catch-form";
 
@@ -19,6 +24,7 @@ export function CatchFormPage({ mode }: CatchFormPageProps) {
   const { pushToast } = useToast();
 
   const catchQuery = useCatch(catchId);
+  const speciesOptionsQuery = useSpeciesOptions();
 
   const createMutation = useCreateCatch({
     onSuccess: (entry) => {
@@ -44,7 +50,7 @@ export function CatchFormPage({ mode }: CatchFormPageProps) {
     const payload = {
       lat: values.lat,
       lon: values.lon,
-      species: values.species?.trim() ?? "",
+      species: values.species.trim(),
       technique_detail: values.technique?.trim() || null,
       notes: values.notes?.trim() || null,
     };
@@ -58,6 +64,10 @@ export function CatchFormPage({ mode }: CatchFormPageProps) {
   }
 
   if (mode === "edit" && catchQuery.isLoading) {
+    return <Skeleton className="h-[560px] w-full" />;
+  }
+
+  if (speciesOptionsQuery.isLoading) {
     return <Skeleton className="h-[560px] w-full" />;
   }
 
@@ -90,6 +100,7 @@ export function CatchFormPage({ mode }: CatchFormPageProps) {
         mode={mode}
         initialValues={mode === "edit" ? catchQuery.data : undefined}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
+        speciesOptions={speciesOptionsQuery.data ?? []}
         onSubmit={handleSubmit}
       />
     </div>

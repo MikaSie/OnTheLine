@@ -35,7 +35,11 @@ const coordinateField = (label: string, min: number, max: number) =>
 export const catchFormSchema = z.object({
   lat: coordinateField("Latitude", -90, 90),
   lon: coordinateField("Longitude", -180, 180),
-  species: z.string().max(100, "Keep species under 100 characters").optional(),
+  species: z
+    .string()
+    .trim()
+    .min(1, "Species is required")
+    .max(100, "Keep species under 100 characters"),
   technique: z
     .string()
     .max(100, "Keep technique under 100 characters")

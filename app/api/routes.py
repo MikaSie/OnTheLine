@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request
+from pydantic import ValidationError
 
+from app.core.reference_data import SPECIES_OPTIONS
 from app.db.session import SessionLocal
 from app.schemas.catch_schema import CatchCreate, CatchRead, CatchUpdate
 from app.services.catch_service import UNSET, CatchService
@@ -12,6 +14,11 @@ def home():
     return {"message": "Fishing log API is running"}
 
 
+@routes.route("/reference-data/species", methods=["GET"])
+def get_species_options():
+    return jsonify(SPECIES_OPTIONS), 200
+
+
 @routes.route("/catches", methods=["POST"])
 def create_catch():
     data = request.get_json(silent=True)
@@ -22,6 +29,9 @@ def create_catch():
     if "lat" not in data or "lon" not in data:
         return jsonify({"error": "Fields 'lat' and 'lon' are required"}), 400
 
+    if "species" not in data:
+        return jsonify({"error": "Field 'species' is required"}), 400
+
     db = SessionLocal()
     catch_service = CatchService(session=db)
 
@@ -29,7 +39,7 @@ def create_catch():
         catch_input = CatchCreate(
             lat=float(data["lat"]),
             lon=float(data["lon"]),
-            species=data.get("species", ""),
+            species=data.get("species"),
             caught_at=data.get("caught_at"),
             length_cm=data.get("length_cm"),
             technique_detail=data.get("technique_detail"),
@@ -49,7 +59,7 @@ def create_catch():
         catch_read = CatchRead.model_validate(new_catch)
         return jsonify(catch_read.model_dump()), 201
 
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, ValidationError):
         return jsonify({"error": "Invalid catch data"}), 400
 
     finally:
@@ -135,7 +145,7 @@ def update_catch(catch_id: str):
         catch_read = CatchRead.model_validate(updated_catch)
         return jsonify(catch_read.model_dump()), 200
 
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, ValidationError):
         return jsonify({"error": "Invalid catch data"}), 400
     finally:
         db.close()

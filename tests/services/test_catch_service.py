@@ -115,6 +115,7 @@ def test_create_catch_propagates_entity_validation_errors(service):
         service.create_catch(
             lat=100.0,
             lon=4.0,
+            species="Perch",
         )
 
 
@@ -127,7 +128,7 @@ def test_list_catches_returns_all_catches(service):
     second = service.create_catch(
         lat=53.0,
         lon=5.0,
-        species="Bass",
+        species="Perch",
     )
 
     catches = service.list_catches()
@@ -180,7 +181,7 @@ def test_update_catch_updates_existing_catch(service, session):
         catch_id=created.catch_id,
         lat=40.0,
         lon=10.0,
-        species="GT",
+        species="Pike",
         length_cm=118,
         technique_detail="Popping",
         notes="Updated notes",
@@ -191,7 +192,7 @@ def test_update_catch_updates_existing_catch(service, session):
     assert updated.catch_id == created.catch_id
     assert updated.lat == 40.0
     assert updated.lon == 10.0
-    assert updated.species == "GT"
+    assert updated.species == "Pike"
     assert updated.length_cm == 118.0
     assert updated.technique_detail == "Popping"
     assert updated.notes == "Updated notes"
@@ -201,7 +202,7 @@ def test_update_catch_updates_existing_catch(service, session):
     assert db_catch is not None
     assert db_catch.lat == 40.0
     assert db_catch.lon == 10.0
-    assert db_catch.species == "GT"
+    assert db_catch.species == "Pike"
     assert db_catch.length_cm == 118.0
     assert db_catch.technique_detail == "Popping"
     assert db_catch.notes == "Updated notes"
@@ -291,7 +292,7 @@ def test_update_catch_returns_none_when_missing(service):
         catch_id="does-not-exist",
         lat=40.0,
         lon=10.0,
-        species="GT",
+        species="Pike",
         technique_detail="Popping",
         notes="Updated notes",
     )
@@ -320,11 +321,22 @@ def test_delete_catch_returns_false_when_missing(service):
 
 
 def test_update_catch_should_reject_invalid_latitude(service):
-    created = service.create_catch(lat=52.0, lon=4.0)
+    created = service.create_catch(lat=52.0, lon=4.0, species="Perch")
 
     with pytest.raises(ValueError):
         service.update_catch(
             catch_id=created.catch_id,
             lat=100.0,
             lon=4.0,
+        )
+
+
+def test_create_catch_rejects_species_outside_supported_list(service):
+    with pytest.raises(
+        ValueError, match="Species must be selected from the supported species list"
+    ):
+        service.create_catch(
+            lat=52.0,
+            lon=4.0,
+            species="Golden Trevally",
         )
