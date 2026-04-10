@@ -18,6 +18,7 @@ interface CatchFormProps {
   initialValues?: Catch;
   isSubmitting: boolean;
   speciesOptions: string[];
+  methodCategoryOptions: string[];
   onSubmit: (values: CatchFormValues) => void;
 }
 
@@ -26,6 +27,7 @@ export function CatchForm({
   initialValues,
   isSubmitting,
   speciesOptions,
+  methodCategoryOptions,
   onSubmit,
 }: CatchFormProps) {
   const form = useForm<CatchFormValues>({
@@ -34,6 +36,7 @@ export function CatchForm({
       lat: initialValues?.lat,
       lon: initialValues?.lon,
       species: initialValues?.species ?? "",
+      methodCategory: initialValues?.method_category ?? "",
       technique: initialValues?.technique_detail ?? "",
       notes: initialValues?.notes ?? "",
     },
@@ -50,12 +53,14 @@ export function CatchForm({
 
   const selectedPoint = toMapPoint(watch("lat"), watch("lon"));
   const selectedSpecies = watch("species");
+  const selectedMethodCategory = watch("methodCategory");
 
   useEffect(() => {
     reset({
       lat: initialValues?.lat,
       lon: initialValues?.lon,
       species: initialValues?.species ?? "",
+      methodCategory: initialValues?.method_category ?? "",
       technique: initialValues?.technique_detail ?? "",
       notes: initialValues?.notes ?? "",
     });
@@ -82,9 +87,7 @@ export function CatchForm({
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label className="text-base font-semibold">
-                  Species
-                </Label>
+                <Label className="text-base font-semibold">Species</Label>
                 <Select
                   value={selectedSpecies}
                   onValueChange={(value) =>
@@ -112,6 +115,38 @@ export function CatchForm({
                   <p className="text-sm text-destructive">{errors.species.message}</p>
                 ) : null}
               </div>
+              <div className="space-y-2">
+                <Label className="text-base font-semibold">Method Category</Label>
+                <Select
+                  value={selectedMethodCategory}
+                  onValueChange={(value) =>
+                    setValue("methodCategory", value, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    })
+                  }
+                >
+                  <SelectTrigger
+                    aria-label="Method Category"
+                    className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
+                  >
+                    <SelectValue placeholder="Select method category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {methodCategoryOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.methodCategory ? (
+                  <p className="text-sm text-destructive">{errors.methodCategory.message}</p>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-1">
               <div className="space-y-2">
                 <Label htmlFor="technique" className="text-base font-semibold">
                   Technique

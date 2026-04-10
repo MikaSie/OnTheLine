@@ -6,6 +6,7 @@ export interface Catch {
   lon: number;
   species: string;
   length_cm?: number | null;
+  method_category?: string | null;
   technique_detail: string | null;
   notes: string | null;
 }
@@ -16,6 +17,7 @@ export interface CreateCatchInput {
   species: string;
   caught_at?: string | null;
   length_cm?: number | null;
+  method_category?: string | null;
   technique_detail?: string | null;
   notes?: string | null;
 }
@@ -26,6 +28,7 @@ export interface UpdateCatchInput {
   species?: string;
   caught_at?: string | null;
   length_cm?: number | null;
+  method_category?: string | null;
   technique_detail?: string | null;
   notes?: string | null;
 }

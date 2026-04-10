@@ -40,6 +40,11 @@ export const catchFormSchema = z.object({
     .trim()
     .min(1, "Species is required")
     .max(100, "Keep species under 100 characters"),
+  methodCategory: z
+    .string()
+    .trim()
+    .min(1, "Method category is required")
+    .max(100, "Keep method category under 100 characters"),
   technique: z
     .string()
     .max(100, "Keep technique under 100 characters")

@@ -33,6 +33,7 @@ class CatchService:
             species=db_catch.species,
             caught_at=self._ensure_utc(db_catch.caught_at),
             length_cm=db_catch.length_cm,
+            method_category=db_catch.method_category,
             technique_detail=db_catch.technique_detail,
             notes=db_catch.notes,
         )
@@ -45,6 +46,7 @@ class CatchService:
         species: str = "",
         caught_at: datetime | None = None,
         length_cm: float | None = None,
+        method_category: str | None = None,
         technique_detail: str | None = None,
         notes: str | None = None,
     ) -> CatchEntity:
@@ -55,6 +57,7 @@ class CatchService:
             species=species,
             caught_at=caught_at,
             length_cm=length_cm,
+            method_category=method_category,
             technique_detail=technique_detail,
             notes=notes,
         )
@@ -67,6 +70,7 @@ class CatchService:
             species=new_catch.species,
             caught_at=new_catch.caught_at,
             length_cm=new_catch.length_cm,
+            method_category=new_catch.method_category,
             technique_detail=new_catch.technique_detail,
             notes=new_catch.notes,
         )
@@ -94,6 +98,7 @@ class CatchService:
         species: str | object = UNSET,
         caught_at: datetime | None | object = UNSET,
         length_cm: float | None | object = UNSET,
+        method_category: str | None | object = UNSET,
         technique_detail: str | None | object = UNSET,
         notes: str | None | object = UNSET,
     ) -> CatchEntity | None:
@@ -113,6 +118,8 @@ class CatchService:
             caught_at = old_catch.caught_at
         if length_cm is UNSET:
             length_cm = old_catch.length_cm
+        if method_category is UNSET:
+            method_category = old_catch.method_category
         if technique_detail is UNSET:
             technique_detail = old_catch.technique_detail
         if notes is UNSET:
@@ -124,6 +131,7 @@ class CatchService:
             species=species,
             caught_at=caught_at,
             length_cm=length_cm,
+            method_category=method_category,
             technique_detail=technique_detail,
             notes=notes,
             created_at=old_catch.created_at,
@@ -134,6 +142,7 @@ class CatchService:
         old_catch.species = validated.species
         old_catch.caught_at = validated.caught_at
         old_catch.length_cm = validated.length_cm
+        old_catch.method_category = validated.method_category
         old_catch.technique_detail = validated.technique_detail
         old_catch.notes = validated.notes
 

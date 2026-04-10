@@ -14,6 +14,7 @@ class CatchCreate(BaseModel):
     species: str
     caught_at: datetime | None = None
     length_cm: float | None = None
+    method_category: str | None = None
     technique_detail: str | None = None
     notes: str | None = None
 
@@ -24,6 +25,7 @@ class CatchUpdate(BaseModel):
     species: str | None = None
     caught_at: datetime | None = None
     length_cm: float | None = None
+    method_category: str | None = None
     technique_detail: str | None = None
     notes: str | None = None
 
@@ -38,5 +40,6 @@ class CatchRead(BaseModel):
     species: str
     caught_at: datetime
     length_cm: float | None = None
+    method_category: str | None = None
     technique_detail: str | None = None
     notes: str | None = None

@@ -8,6 +8,7 @@ import { useToast } from "../../../components/ui/toaster";
 import {
   useCatch,
   useCreateCatch,
+  useMethodCategories,
   useSpeciesOptions,
   useUpdateCatch,
 } from "../hooks/use-catches";
@@ -25,6 +26,7 @@ export function CatchFormPage({ mode }: CatchFormPageProps) {
 
   const catchQuery = useCatch(catchId);
   const speciesOptionsQuery = useSpeciesOptions();
+  const methodCategoriesQuery = useMethodCategories();
 
   const createMutation = useCreateCatch({
     onSuccess: (entry) => {
@@ -51,6 +53,7 @@ export function CatchFormPage({ mode }: CatchFormPageProps) {
       lat: values.lat,
       lon: values.lon,
       species: values.species.trim(),
+      method_category: values.methodCategory.trim(),
       technique_detail: values.technique?.trim() || null,
       notes: values.notes?.trim() || null,
     };
@@ -68,6 +71,10 @@ export function CatchFormPage({ mode }: CatchFormPageProps) {
   }
 
   if (speciesOptionsQuery.isLoading) {
+    return <Skeleton className="h-[560px] w-full" />;
+  }
+
+  if (methodCategoriesQuery.isLoading) {
     return <Skeleton className="h-[560px] w-full" />;
   }
 
@@ -101,6 +108,7 @@ export function CatchFormPage({ mode }: CatchFormPageProps) {
         initialValues={mode === "edit" ? catchQuery.data : undefined}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
         speciesOptions={speciesOptionsQuery.data ?? []}
+        methodCategoryOptions={methodCategoriesQuery.data ?? []}
         onSubmit={handleSubmit}
       />
     </div>

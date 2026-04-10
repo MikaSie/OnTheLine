@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
 
-from app.core.reference_data import SPECIES_OPTIONS
+from app.core.reference_data import METHOD_CATEGORIES, SPECIES_OPTIONS
 from app.db.session import SessionLocal
 from app.schemas.catch_schema import CatchCreate, CatchRead, CatchUpdate
 from app.services.catch_service import UNSET, CatchService
@@ -17,6 +17,11 @@ def home():
 @routes.route("/reference-data/species", methods=["GET"])
 def get_species_options():
     return jsonify(SPECIES_OPTIONS), 200
+
+
+@routes.route("/reference-data/method-categories", methods=["GET"])
+def get_method_categories():
+    return jsonify(METHOD_CATEGORIES), 200
 
 
 @routes.route("/catches", methods=["POST"])
@@ -42,6 +47,7 @@ def create_catch():
             species=data.get("species"),
             caught_at=data.get("caught_at"),
             length_cm=data.get("length_cm"),
+            method_category=data.get("method_category"),
             technique_detail=data.get("technique_detail"),
             notes=data.get("notes"),
         )
@@ -52,6 +58,7 @@ def create_catch():
             species=catch_input.species,
             caught_at=catch_input.caught_at,
             length_cm=catch_input.length_cm,
+            method_category=catch_input.method_category,
             technique_detail=catch_input.technique_detail,
             notes=catch_input.notes,
         )
@@ -133,9 +140,8 @@ def update_catch(catch_id: str):
             species=update_input.species if "species" in data else UNSET,
             caught_at=update_input.caught_at if "caught_at" in data else UNSET,
             length_cm=update_input.length_cm if "length_cm" in data else UNSET,
-            technique_detail=update_input.technique_detail
-            if "technique_detail" in data
-            else UNSET,
+            method_category=update_input.method_category if "method_category" in data else UNSET,
+            technique_detail=update_input.technique_detail if "technique_detail" in data else UNSET,
             notes=update_input.notes if "notes" in data else UNSET,
         )
 

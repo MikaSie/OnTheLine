@@ -21,7 +21,7 @@ class CatchModel(Base):
     species: Mapped[str] = mapped_column(String)
     caught_at: Mapped[datetime] = mapped_column(DateTime)
     length_cm: Mapped[float | None] = mapped_column(Float, nullable=True)
-    # method_category
+    method_category: Mapped[str] = mapped_column(String, nullable=True)
     technique_detail: Mapped[str | None] = mapped_column(String, nullable=True)
     # depth
     notes: Mapped[str | None] = mapped_column(String, nullable=True)

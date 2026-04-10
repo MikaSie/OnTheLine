@@ -221,6 +221,51 @@ def test_length_cm_must_be_greater_than_zero():
         )
 
 
+def test_method_category_is_normalized():
+    catch = CatchEntity.new(
+        lat=52.0,
+        lon=4.0,
+        species="Perch",
+        method_category="spinning",
+    )
+
+    assert catch.method_category == "Spinning"
+
+
+def test_method_category_can_be_none():
+    catch = CatchEntity.new(
+        lat=52.0,
+        lon=4.0,
+        species="Perch",
+        method_category=None,
+    )
+
+    assert catch.method_category is None
+
+
+def test_method_category_must_be_string_or_none():
+    with pytest.raises(ValueError, match="method_category must be a string or None"):
+        CatchEntity.new(
+            lat=52.0,
+            lon=4.0,
+            species="Perch",
+            method_category=123,
+        )
+
+
+def test_method_category_must_be_in_supported_list():
+    with pytest.raises(
+        ValueError,
+        match="Method category must be selected from the supported categories list",
+    ):
+        CatchEntity.new(
+            lat=52.0,
+            lon=4.0,
+            species="Perch",
+            method_category="Handlining",
+        )
+
+
 def test_notes_must_be_string_or_none():
     with pytest.raises(ValueError, match="Notes must be a string or None"):
         CatchEntity.new(

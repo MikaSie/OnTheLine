@@ -28,6 +28,9 @@ export const api = {
   getSpeciesOptions() {
     return request<string[]>("/reference-data/species");
   },
+  getMethodCategories() {
+    return request<string[]>("/reference-data/method-categories");
+  },
   listCatches() {
     return request<Catch[]>("/catches");
   },

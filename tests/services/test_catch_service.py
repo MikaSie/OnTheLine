@@ -107,7 +107,20 @@ def test_create_catch_stores_length_cm(service, session):
 
     db_catch = session.get(CatchModel, catch.catch_id)
     assert db_catch is not None
-    assert db_catch.length_cm == 71.5
+    assert db_catch.length_cm == catch.length_cm
+
+
+def test_create_catch_stores_method_category(service, session):
+    catch = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        method_category="Spinning",
+    )
+
+    db_catch = session.get(CatchModel, catch.catch_id)
+    assert db_catch is not None
+    assert db_catch.method_category == "Spinning"
 
 
 def test_create_catch_propagates_entity_validation_errors(service):
@@ -287,6 +300,27 @@ def test_update_catch_can_update_length_cm(service, session):
     assert db_catch.length_cm == 68.5
 
 
+def test_update_catch_can_update_method_category(service, session):
+    created = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        method_category="Spinning",
+    )
+
+    updated = service.update_catch(
+        catch_id=created.catch_id,
+        method_category="Vertical Fishing",
+    )
+
+    assert updated is not None
+    assert updated.method_category == "Vertical Fishing"
+
+    db_catch = session.get(CatchModel, created.catch_id)
+    assert db_catch is not None
+    assert db_catch.method_category == "Vertical Fishing"
+
+
 def test_update_catch_returns_none_when_missing(service):
     updated = service.update_catch(
         catch_id="does-not-exist",
@@ -339,4 +373,17 @@ def test_create_catch_rejects_species_outside_supported_list(service):
             lat=52.0,
             lon=4.0,
             species="Golden Trevally",
+        )
+
+
+def test_create_catch_rejects_method_category_outside_supported_list(service):
+    with pytest.raises(
+        ValueError,
+        match="Method category must be selected from the supported categories list",
+    ):
+        service.create_catch(
+            lat=52.0,
+            lon=4.0,
+            species="Perch",
+            method_category="Handlining",
         )
