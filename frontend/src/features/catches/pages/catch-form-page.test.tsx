@@ -12,6 +12,17 @@ const mockUseParams = vi.fn(() => ({}));
 const mockUseCatch = vi.fn();
 const mockUseSpeciesOptions = vi.fn();
 const mockUseMethodCategories = vi.fn();
+let mockFormValues: {
+  lat: number;
+  lon: number;
+  caughtAt?: string;
+  species?: string;
+  lengthCm?: number;
+  methodCategory?: string;
+  depthM?: number;
+  technique?: string;
+  notes?: string;
+};
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual<typeof import("react-router-dom")>(
@@ -58,15 +69,7 @@ vi.mock("../components/catch-form", () => ({
     mode,
     initialValues,
   }: {
-    onSubmit: (values: {
-      lat: number;
-      lon: number;
-      species?: string;
-      methodCategory?: string;
-      depthM?: number;
-      technique?: string;
-      notes?: string;
-    }) => void;
+    onSubmit: (values: typeof mockFormValues) => void;
     mode: string;
     initialValues?: { species?: string };
   }) => (
@@ -75,17 +78,7 @@ vi.mock("../components/catch-form", () => ({
       <div data-testid="initial-species">{initialValues?.species ?? "none"}</div>
       <button
         type="button"
-        onClick={() =>
-        onSubmit({
-          lat: 52.3676,
-          lon: 4.9041,
-          species: "  Sea Trout  ",
-          methodCategory: "  Spinning  ",
-          depthM: 3.5,
-          technique: "  Spinning  ",
-          notes: "  Near the rocks  ",
-        })
-        }
+        onClick={() => onSubmit(mockFormValues)}
       >
         Submit mock form
       </button>
@@ -117,6 +110,17 @@ describe("CatchFormPage", () => {
       isLoading: false,
       data: ["Spinning", "Fly Fishing", "Other"],
     });
+    mockFormValues = {
+      lat: 52.3676,
+      lon: 4.9041,
+      caughtAt: "2026-04-09T06:30",
+      species: "  Sea Trout  ",
+      lengthCm: 61.5,
+      methodCategory: "  Spinning  ",
+      depthM: 3.5,
+      technique: "  Spinning  ",
+      notes: "  Near the rocks  ",
+    };
   });
 
   it("submits trimmed payload in create mode and navigates to the new detail page", () => {
@@ -131,7 +135,9 @@ describe("CatchFormPage", () => {
     expect(mockCreateMutate).toHaveBeenCalledWith({
       lat: 52.3676,
       lon: 4.9041,
+      caught_at: "2026-04-09T04:30:00.000Z",
       species: "Sea Trout",
+      length_cm: 61.5,
       method_category: "Spinning",
       depth_m: 3.5,
       technique_detail: "Spinning",
@@ -154,6 +160,7 @@ describe("CatchFormPage", () => {
         lat: 52.1,
         lon: 4.1,
         species: "Sea Bass",
+        length_cm: 74.5,
         method_category: "Spinning",
         depth_m: 2.0,
         technique_detail: "Fly",
@@ -177,7 +184,9 @@ describe("CatchFormPage", () => {
       payload: {
         lat: 52.3676,
         lon: 4.9041,
+        caught_at: "2026-04-09T04:30:00.000Z",
         species: "Sea Trout",
+        length_cm: 61.5,
         method_category: "Spinning",
         depth_m: 3.5,
         technique_detail: "Spinning",
@@ -185,6 +194,27 @@ describe("CatchFormPage", () => {
       },
     });
     expect(mockNavigate).toHaveBeenCalledWith("/catches/catch-123");
+  });
+
+  it("submits a null method category when it is left empty", () => {
+    mockFormValues = {
+      ...mockFormValues,
+      methodCategory: "   ",
+    };
+
+    render(
+      <MemoryRouter>
+        <CatchFormPage mode="create" />
+      </MemoryRouter>,
+    );
+
+    screen.getByRole("button", { name: "Submit mock form" }).click();
+
+    expect(mockCreateMutate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method_category: null,
+      }),
+    );
   });
 
   it("shows a fallback state when edit mode cannot load a catch", () => {

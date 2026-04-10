@@ -52,8 +52,10 @@ export function CatchFormPage({ mode }: CatchFormPageProps) {
     const payload = {
       lat: values.lat,
       lon: values.lon,
+      caught_at: values.caughtAt ? new Date(values.caughtAt).toISOString() : null,
       species: values.species.trim(),
-      method_category: values.methodCategory.trim(),
+      length_cm: values.lengthCm ?? null,
+      method_category: values.methodCategory?.trim() || null,
       depth_m: values.depthM ?? null,
       technique_detail: values.technique?.trim() || null,
       notes: values.notes?.trim() || null,
