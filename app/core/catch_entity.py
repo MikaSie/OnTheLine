@@ -13,7 +13,7 @@ class CatchEntity:
     lat: float
     lon: float
     species: str
-    technique: str | None
+    technique_detail: str | None
     notes: str | None
 
     @staticmethod
@@ -22,7 +22,7 @@ class CatchEntity:
         lat: float,
         lon: float,
         species: str = "",
-        technique: Optional[str] = None,
+        technique_detail: Optional[str] = None,
         notes: Optional[str] = None,
         created_at: Optional[datetime] = None,
     ) -> "CatchEntity":
@@ -33,8 +33,8 @@ class CatchEntity:
         if not isinstance(species, str):
             raise ValueError("Species must be a string")
 
-        if technique is not None and not isinstance(technique, str):
-            raise ValueError("Technique must be a string or None")
+        if technique_detail is not None and not isinstance(technique_detail, str):
+            raise ValueError("technique_detail must be a string or None")
 
         if notes is not None and not isinstance(notes, str):
             raise ValueError("Notes must be a string or None")
@@ -56,6 +56,6 @@ class CatchEntity:
             lat=lat,
             lon=lon,
             species=species,
-            technique=technique,
+            technique_detail=technique_detail,
             notes=notes,
         )

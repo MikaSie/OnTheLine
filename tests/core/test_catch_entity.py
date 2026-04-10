@@ -10,7 +10,7 @@ def test_create_catch_with_valid_input():
         lat=52.0,
         lon=4.0,
         species="Sea Trout",
-        technique="Spinning",
+        technique_detail="Spinning",
         notes="Caught near rocks",
     )
 
@@ -18,7 +18,7 @@ def test_create_catch_with_valid_input():
     assert catch.lat == 52.0
     assert catch.lon == 4.0
     assert catch.species == "Sea Trout"
-    assert catch.technique == "Spinning"
+    assert catch.technique_detail == "Spinning"
     assert catch.notes == "Caught near rocks"
     assert isinstance(catch.catch_id, str)
 
@@ -123,23 +123,23 @@ def test_species_must_be_string():
         )
 
 
-def test_technique_must_be_string_or_none():
-    with pytest.raises(ValueError, match="Technique must be a string or None"):
+def test_technique_detail_must_be_string_or_none():
+    with pytest.raises(ValueError, match="technique_detail must be a string or None"):
         CatchEntity.new(
             lat=52.0,
             lon=4.0,
-            technique=123,
+            technique_detail=123,
         )
 
 
-def test_technique_can_be_none():
+def test_technique_detail_can_be_none():
     catch = CatchEntity.new(
         lat=52.0,
         lon=4.0,
-        technique=None,
+        technique_detail=None,
     )
 
-    assert catch.technique is None
+    assert catch.technique_detail is None
 
 
 def test_notes_must_be_string_or_none():

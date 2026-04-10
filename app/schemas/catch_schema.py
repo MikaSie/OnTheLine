@@ -12,7 +12,7 @@ class CatchCreate(BaseModel):
     lat: float
     lon: float
     species: str = ""
-    technique: str | None = None
+    technique_detail: str | None = None
     notes: str | None = None
 
 
@@ -24,5 +24,5 @@ class CatchRead(BaseModel):
     lat: float
     lon: float
     species: str
-    technique: str | None = None
+    technique_detail: str | None = None
     notes: str | None = None

@@ -17,6 +17,8 @@ class CatchModel(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime)
     lat: Mapped[float] = mapped_column(Float)
     lon: Mapped[float] = mapped_column(Float)
+
     species: Mapped[str] = mapped_column(String)
-    technique: Mapped[str | None] = mapped_column(String, nullable=True)
+    # Method_category
+    technique_detail: Mapped[str | None] = mapped_column(String, nullable=True)
     notes: Mapped[str | None] = mapped_column(String, nullable=True)

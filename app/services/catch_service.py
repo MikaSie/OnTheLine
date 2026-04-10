@@ -24,7 +24,7 @@ class CatchService:
             lat=db_catch.lat,
             lon=db_catch.lon,
             species=db_catch.species,
-            technique=db_catch.technique,
+            technique_detail=db_catch.technique_detail,
             notes=db_catch.notes,
         )
 
@@ -34,7 +34,7 @@ class CatchService:
         lat: float,
         lon: float,
         species: str = "",
-        technique: str | None = None,
+        technique_detail: str | None = None,
         notes: str | None = None,
     ) -> CatchEntity:
 
@@ -42,7 +42,7 @@ class CatchService:
             lat=lat,
             lon=lon,
             species=species,
-            technique=technique,
+            technique_detail=technique_detail,
             notes=notes,
         )
 
@@ -52,7 +52,7 @@ class CatchService:
             lat=new_catch.lat,
             lon=new_catch.lon,
             species=new_catch.species,
-            technique=new_catch.technique,
+            technique_detail=new_catch.technique_detail,
             notes=new_catch.notes,
         )
 
@@ -77,7 +77,7 @@ class CatchService:
         lat: float | object = UNSET,
         lon: float | object = UNSET,
         species: str | object = UNSET,
-        technique: str | None | object = UNSET,
+        technique_detail: str | None | object = UNSET,
         notes: str | None | object = UNSET,
     ) -> CatchEntity | None:
 
@@ -92,8 +92,8 @@ class CatchService:
             lon = old_catch.lon
         if species is UNSET:
             species = old_catch.species
-        if technique is UNSET:
-            technique = old_catch.technique
+        if technique_detail is UNSET:
+            technique_detail = old_catch.technique_detail
         if notes is UNSET:
             notes = old_catch.notes
 
@@ -101,7 +101,7 @@ class CatchService:
             lat=lat,
             lon=lon,
             species=species,
-            technique=technique,
+            technique_detail=technique_detail,
             notes=notes,
             created_at=old_catch.created_at,
         )
@@ -109,7 +109,7 @@ class CatchService:
         old_catch.lat = validated.lat
         old_catch.lon = validated.lon
         old_catch.species = validated.species
-        old_catch.technique = validated.technique
+        old_catch.technique_detail = validated.technique_detail
         old_catch.notes = validated.notes
 
         self._db.commit()

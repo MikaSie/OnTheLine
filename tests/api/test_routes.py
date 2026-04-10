@@ -33,7 +33,7 @@ def test_create_catch_returns_201(client):
         lat=52.0,
         lon=4.0,
         species="Seabass",
-        technique="Jig",
+        technique_detail="Jig",
         notes="Nice fish",
     )
 
@@ -52,7 +52,7 @@ def test_create_catch_returns_201(client):
                 "lat": 52.0,
                 "lon": 4.0,
                 "species": "Seabass",
-                "technique": "Jig",
+                "technique_detail": "Jig",
                 "notes": "Nice fish",
             },
             content_type="application/json",
@@ -65,14 +65,14 @@ def test_create_catch_returns_201(client):
     assert data["lat"] == 52.0
     assert data["lon"] == 4.0
     assert data["species"] == "Seabass"
-    assert data["technique"] == "Jig"
+    assert data["technique_detail"] == "Jig"
     assert data["notes"] == "Nice fish"
 
     mock_service_instance.create_catch.assert_called_once_with(
         lat=52.0,
         lon=4.0,
         species="Seabass",
-        technique="Jig",
+        technique_detail="Jig",
         notes="Nice fish",
     )
     mock_db.close.assert_called_once()
@@ -106,7 +106,7 @@ def test_create_catch_returns_400_missing_lon(client):
             json={
                 "lat": 52.0,
                 "species": "Seabass",
-                "technique": "Jig",
+                "technique_detail": "Jig",
                 "notes": "Nice fish",
             },
         )
@@ -128,7 +128,7 @@ def test_create_catch_returns_400_missing_lat(client):
             json={
                 "lon": 4.0,
                 "species": "Seabass",
-                "technique": "Jig",
+                "technique_detail": "Jig",
                 "notes": "Nice fish",
             },
         )
@@ -156,7 +156,7 @@ def test_create_catch_returns_400_invalid_float_conversion(client):
                 "lat": "WRONG",
                 "lon": 4.0,
                 "species": "Seabass",
-                "technique": "Jig",
+                "technique_detail": "Jig",
                 "notes": "Nice fish",
             },
         )
@@ -185,7 +185,7 @@ def test_create_catch_returns_400_invalid_species_type(client):
                 "lat": 52.0,
                 "lon": 4.0,
                 "species": 5,
-                "technique": "Jig",
+                "technique_detail": "Jig",
                 "notes": "Nice fish",
             },
         )
@@ -199,7 +199,7 @@ def test_create_catch_returns_400_invalid_species_type(client):
     mock_db.close.assert_called_once()
 
 
-def test_create_catch_returns_400_invalid_technique_type(client):
+def test_create_catch_returns_400_invalid_technique_detail_type(client):
     mock_db = MagicMock()
     mock_service_instance = MagicMock()
 
@@ -215,7 +215,7 @@ def test_create_catch_returns_400_invalid_technique_type(client):
                 "lat": 52.0,
                 "lon": 4.0,
                 "species": "Seabass",
-                "technique": 5,
+                "technique_detail": 5,
                 "notes": "Nice fish",
             },
         )
@@ -245,7 +245,7 @@ def test_create_catch_returns_400_invalid_notes_type(client):
                 "lat": 52.0,
                 "lon": 4.0,
                 "species": "Seabass",
-                "technique": "Jig",
+                "technique_detail": "Jig",
                 "notes": 5,
             },
         )
@@ -265,7 +265,7 @@ def test_get_catches_returns_200(client):
         lat=52.0,
         lon=4.0,
         species="Seabass",
-        technique="Jig",
+        technique_detail="Jig",
         notes="Nice fish",
     )
 
@@ -274,7 +274,7 @@ def test_get_catches_returns_200(client):
         lat=62.0,
         lon=14.0,
         species="Sea trout",
-        technique="Spinner",
+        technique_detail="Spinner",
         notes="Good fight",
     )
 
@@ -345,7 +345,7 @@ def test_get_catch_returns_200(client):
         lat=52.0,
         lon=4.0,
         species="Seabass",
-        technique="Jig",
+        technique_detail="Jig",
         notes="Nice fish",
     )
 
@@ -369,7 +369,7 @@ def test_get_catch_returns_200(client):
     assert data["lat"] == fake_created_catch.lat
     assert data["lon"] == fake_created_catch.lon
     assert data["species"] == fake_created_catch.species
-    assert data["technique"] == fake_created_catch.technique
+    assert data["technique_detail"] == fake_created_catch.technique_detail
     assert data["notes"] == fake_created_catch.notes
 
     mock_service_instance.get_catch.assert_called_once_with(fake_created_catch.catch_id)
@@ -456,7 +456,7 @@ def test_update_catch_returns_200(client):
         lat=52.0,
         lon=4.0,
         species="Pike",
-        technique="Jig",
+        technique_detail="Jig",
         notes="Updated catch",
     )
 
@@ -477,7 +477,7 @@ def test_update_catch_returns_200(client):
                 "lat": 52.0,
                 "lon": 4.0,
                 "species": "Pike",
-                "technique": "Jig",
+                "technique_detail": "Jig",
                 "notes": "Updated catch",
             },
         )
@@ -489,7 +489,7 @@ def test_update_catch_returns_200(client):
     assert data["lat"] == updated_catch.lat
     assert data["lon"] == updated_catch.lon
     assert data["species"] == updated_catch.species
-    assert data["technique"] == updated_catch.technique
+    assert data["technique_detail"] == updated_catch.technique_detail
     assert data["notes"] == updated_catch.notes
 
     mock_service_instance.update_catch.assert_called_once_with(
@@ -497,7 +497,7 @@ def test_update_catch_returns_200(client):
         lat=52.0,
         lon=4.0,
         species="Pike",
-        technique="Jig",
+        technique_detail="Jig",
         notes="Updated catch",
     )
     mock_session.assert_called_once()
@@ -512,7 +512,7 @@ def test_update_catch_returns_200_partial_update(client):
         lat=52.0,
         lon=4.0,
         species="Pike",
-        technique="Spinnerbait",
+        technique_detail="Spinnerbait",
         notes="Massive take",
     )
 
@@ -530,7 +530,7 @@ def test_update_catch_returns_200_partial_update(client):
         response = client.put(
             f"/catches/{updated_catch.catch_id}",
             json={
-                "technique": "Spinnerbait",
+                "technique_detail": "Spinnerbait",
                 "notes": "Massive take",
             },
         )
@@ -542,13 +542,13 @@ def test_update_catch_returns_200_partial_update(client):
     assert data["lat"] == updated_catch.lat
     assert data["lon"] == updated_catch.lon
     assert data["species"] == updated_catch.species
-    assert data["technique"] == updated_catch.technique
+    assert data["technique_detail"] == updated_catch.technique_detail
     assert data["notes"] == updated_catch.notes
 
     mock_service_instance.update_catch.assert_called_once()
     called_kwargs = mock_service_instance.update_catch.call_args.kwargs
     assert called_kwargs["catch_id"] == updated_catch.catch_id
-    assert called_kwargs["technique"] == "Spinnerbait"
+    assert called_kwargs["technique_detail"] == "Spinnerbait"
     assert called_kwargs["notes"] == "Massive take"
 
     mock_session.assert_called_once()
@@ -595,7 +595,7 @@ def test_update_catch_returns_404_not_found(client):
                 "lat": 52.0,
                 "lon": 4.0,
                 "species": "Pike",
-                "technique": "Jig",
+                "technique_detail": "Jig",
                 "notes": "Updated catch",
             },
         )
@@ -608,7 +608,7 @@ def test_update_catch_returns_404_not_found(client):
         lat=52.0,
         lon=4.0,
         species="Pike",
-        technique="Jig",
+        technique_detail="Jig",
         notes="Updated catch",
     )
     mock_session.assert_called_once()
@@ -636,7 +636,7 @@ def test_update_catch_returns_400_value_error(client):
                 "lat": 52.0,
                 "lon": 4.0,
                 "species": "Pike",
-                "technique": "Jig",
+                "technique_detail": "Jig",
                 "notes": "Updated catch",
             },
         )
@@ -649,7 +649,7 @@ def test_update_catch_returns_400_value_error(client):
         lat=52.0,
         lon=4.0,
         species="Pike",
-        technique="Jig",
+        technique_detail="Jig",
         notes="Updated catch",
     )
     mock_session.assert_called_once()
@@ -673,7 +673,7 @@ def test_update_catch_returns_400_invalid_lat_value(client):
             f"/catches/{random_catch_id}",
             json={
                 "lat": "WRONG",
-                "technique": "Spinnerbait",
+                "technique_detail": "Spinnerbait",
             },
         )
 

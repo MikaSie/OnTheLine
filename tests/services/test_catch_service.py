@@ -31,7 +31,7 @@ def test_create_catch_stores_and_returns_entity(service, session):
         lat=52.0,
         lon=4.0,
         species="Sea Trout",
-        technique="Spinning",
+        technique_detail="Spinning",
         notes="Caught near rocks",
     )
 
@@ -39,7 +39,7 @@ def test_create_catch_stores_and_returns_entity(service, session):
     assert catch.lat == 52.0
     assert catch.lon == 4.0
     assert catch.species == "Sea Trout"
-    assert catch.technique == "Spinning"
+    assert catch.technique_detail == "Spinning"
     assert catch.notes == "Caught near rocks"
 
     db_catch = session.get(CatchModel, catch.catch_id)
@@ -48,7 +48,7 @@ def test_create_catch_stores_and_returns_entity(service, session):
     assert db_catch.lat == 52.0
     assert db_catch.lon == 4.0
     assert db_catch.species == "Sea Trout"
-    assert db_catch.technique == "Spinning"
+    assert db_catch.technique_detail == "Spinning"
     assert db_catch.notes == "Caught near rocks"
 
 
@@ -87,7 +87,7 @@ def test_get_catch_returns_existing_catch(service):
         lat=52.0,
         lon=4.0,
         species="Sea Trout",
-        technique="Spinning",
+        technique_detail="Spinning",
         notes="Morning fish",
     )
 
@@ -99,7 +99,7 @@ def test_get_catch_returns_existing_catch(service):
     assert found.lat == created.lat
     assert found.lon == created.lon
     assert found.species == created.species
-    assert found.technique == created.technique
+    assert found.technique_detail == created.technique_detail
     assert found.notes == created.notes
 
 
@@ -114,7 +114,7 @@ def test_update_catch_updates_existing_catch(service, session):
         lat=52.0,
         lon=4.0,
         species="Sea Trout",
-        technique="Spinning",
+        technique_detail="Spinning",
         notes="Morning fish",
     )
 
@@ -123,7 +123,7 @@ def test_update_catch_updates_existing_catch(service, session):
         lat=40.0,
         lon=10.0,
         species="GT",
-        technique="Popping",
+        technique_detail="Popping",
         notes="Updated notes",
     )
 
@@ -133,7 +133,7 @@ def test_update_catch_updates_existing_catch(service, session):
     assert updated.lat == 40.0
     assert updated.lon == 10.0
     assert updated.species == "GT"
-    assert updated.technique == "Popping"
+    assert updated.technique_detail == "Popping"
     assert updated.notes == "Updated notes"
 
     db_catch = session.get(CatchModel, created.catch_id)
@@ -141,7 +141,7 @@ def test_update_catch_updates_existing_catch(service, session):
     assert db_catch.lat == 40.0
     assert db_catch.lon == 10.0
     assert db_catch.species == "GT"
-    assert db_catch.technique == "Popping"
+    assert db_catch.technique_detail == "Popping"
     assert db_catch.notes == "Updated notes"
 
 
@@ -150,7 +150,7 @@ def test_update_catch_can_update_only_species(service, session):
         lat=52.0,
         lon=4.0,
         species="Sea Trout",
-        technique="Spinning",
+        technique_detail="Spinning",
         notes="Morning fish",
     )
 
@@ -165,7 +165,7 @@ def test_update_catch_can_update_only_species(service, session):
     assert updated.lat == 52.0
     assert updated.lon == 4.0
     assert updated.species == "Sea Bass"
-    assert updated.technique == "Spinning"
+    assert updated.technique_detail == "Spinning"
     assert updated.notes == "Morning fish"
 
     db_catch = session.get(CatchModel, created.catch_id)
@@ -173,7 +173,7 @@ def test_update_catch_can_update_only_species(service, session):
     assert db_catch.lat == 52.0
     assert db_catch.lon == 4.0
     assert db_catch.species == "Sea Bass"
-    assert db_catch.technique == "Spinning"
+    assert db_catch.technique_detail == "Spinning"
     assert db_catch.notes == "Morning fish"
 
 
@@ -183,7 +183,7 @@ def test_update_catch_returns_none_when_missing(service):
         lat=40.0,
         lon=10.0,
         species="GT",
-        technique="Popping",
+        technique_detail="Popping",
         notes="Updated notes",
     )
 
