@@ -14,9 +14,14 @@ class CatchModel(Base):
     __tablename__ = "catches"
 
     catch_id: Mapped[str] = mapped_column(String, primary_key=True)
-    timestamp: Mapped[datetime] = mapped_column(DateTime)
+    created_at: Mapped[datetime] = mapped_column(DateTime)
     lat: Mapped[float] = mapped_column(Float)
     lon: Mapped[float] = mapped_column(Float)
+
     species: Mapped[str] = mapped_column(String)
-    technique: Mapped[str | None] = mapped_column(String, nullable=True)
+    caught_at: Mapped[datetime] = mapped_column(DateTime)
+    length_cm: Mapped[float | None] = mapped_column(Float, nullable=True)
+    method_category: Mapped[str] = mapped_column(String, nullable=True)
+    technique_detail: Mapped[str | None] = mapped_column(String, nullable=True)
+    depth_m: Mapped[float | None] = mapped_column(Float, nullable=True)
     notes: Mapped[str | None] = mapped_column(String, nullable=True)

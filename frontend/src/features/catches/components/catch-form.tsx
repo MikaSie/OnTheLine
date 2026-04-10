@@ -6,6 +6,7 @@ import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
 import { Textarea } from "../../../components/ui/textarea";
 import type { Catch } from "../../../lib/types";
 import { toMapPoint } from "../../maps/lib/map-utils";
@@ -16,6 +17,8 @@ interface CatchFormProps {
   mode: "create" | "edit";
   initialValues?: Catch;
   isSubmitting: boolean;
+  speciesOptions: string[];
+  methodCategoryOptions: string[];
   onSubmit: (values: CatchFormValues) => void;
 }
 
@@ -23,6 +26,8 @@ export function CatchForm({
   mode,
   initialValues,
   isSubmitting,
+  speciesOptions,
+  methodCategoryOptions,
   onSubmit,
 }: CatchFormProps) {
   const form = useForm<CatchFormValues>({
@@ -31,7 +36,9 @@ export function CatchForm({
       lat: initialValues?.lat,
       lon: initialValues?.lon,
       species: initialValues?.species ?? "",
-      technique: initialValues?.technique ?? "",
+      methodCategory: initialValues?.method_category ?? "",
+      depthM: initialValues?.depth_m ?? undefined,
+      technique: initialValues?.technique_detail ?? "",
       notes: initialValues?.notes ?? "",
     },
   });
@@ -46,13 +53,17 @@ export function CatchForm({
   } = form;
 
   const selectedPoint = toMapPoint(watch("lat"), watch("lon"));
+  const selectedSpecies = watch("species");
+  const selectedMethodCategory = watch("methodCategory");
 
   useEffect(() => {
     reset({
       lat: initialValues?.lat,
       lon: initialValues?.lon,
       species: initialValues?.species ?? "",
-      technique: initialValues?.technique ?? "",
+      methodCategory: initialValues?.method_category ?? "",
+      depthM: initialValues?.depth_m ?? undefined,
+      technique: initialValues?.technique_detail ?? "",
       notes: initialValues?.notes ?? "",
     });
   }, [initialValues, reset]);
@@ -78,17 +89,79 @@ export function CatchForm({
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="species" className="text-base font-semibold">
-                  Species
-                </Label>
-                <Input
-                  id="species"
-                  className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
-                  placeholder="Sea trout"
-                  {...register("species")}
-                />
+                <Label className="text-base font-semibold">Species</Label>
+                <Select
+                  value={selectedSpecies}
+                  onValueChange={(value) =>
+                    setValue("species", value, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    })
+                  }
+                >
+                  <SelectTrigger
+                    aria-label="Species"
+                    className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
+                  >
+                    <SelectValue placeholder="Select species" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {speciesOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 {errors.species ? (
                   <p className="text-sm text-destructive">{errors.species.message}</p>
+                ) : null}
+              </div>
+              <div className="space-y-2">
+                <Label className="text-base font-semibold">Method Category</Label>
+                <Select
+                  value={selectedMethodCategory}
+                  onValueChange={(value) =>
+                    setValue("methodCategory", value, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    })
+                  }
+                >
+                  <SelectTrigger
+                    aria-label="Method Category"
+                    className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
+                  >
+                    <SelectValue placeholder="Select method category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {methodCategoryOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.methodCategory ? (
+                  <p className="text-sm text-destructive">{errors.methodCategory.message}</p>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="depthM" className="text-base font-semibold">
+                  Depth (m)
+                </Label>
+                <Input
+                  id="depthM"
+                  inputMode="decimal"
+                  className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
+                  placeholder="Optional depth in meters"
+                  {...register("depthM")}
+                />
+                {errors.depthM ? (
+                  <p className="text-sm text-destructive">{errors.depthM.message}</p>
                 ) : null}
               </div>
               <div className="space-y-2">

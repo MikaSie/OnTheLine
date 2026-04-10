@@ -30,12 +30,12 @@ export function CatchTable({ catches }: { catches: Catch[] }) {
             <TableCell className="font-medium text-foreground">
               {entry.species || "Unspecified"}
             </TableCell>
-            <TableCell>{entry.technique || "Unspecified"}</TableCell>
+            <TableCell>{entry.technique_detail || "Unspecified"}</TableCell>
             <TableCell>
               {formatCoordinate(entry.lat, "lat")} /{" "}
               {formatCoordinate(entry.lon, "lon")}
             </TableCell>
-            <TableCell>{formatDateTime(entry.timestamp)}</TableCell>
+            <TableCell>{formatDateTime(entry.caught_at)}</TableCell>
             <TableCell className="text-right">
               <Button asChild variant="ghost" size="sm">
                 <Link to={`/catches/${entry.catch_id}`}>View</Link>

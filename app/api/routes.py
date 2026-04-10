@@ -1,7 +1,9 @@
 from flask import Blueprint, jsonify, request
+from pydantic import ValidationError
 
+from app.core.reference_data import METHOD_CATEGORIES, SPECIES_OPTIONS
 from app.db.session import SessionLocal
-from app.schemas.catch_schema import CatchCreate, CatchRead
+from app.schemas.catch_schema import CatchCreate, CatchRead, CatchUpdate
 from app.services.catch_service import UNSET, CatchService
 
 routes = Blueprint("routes", __name__)
@@ -10,6 +12,16 @@ routes = Blueprint("routes", __name__)
 @routes.route("/")
 def home():
     return {"message": "Fishing log API is running"}
+
+
+@routes.route("/reference-data/species", methods=["GET"])
+def get_species_options():
+    return jsonify(SPECIES_OPTIONS), 200
+
+
+@routes.route("/reference-data/method-categories", methods=["GET"])
+def get_method_categories():
+    return jsonify(METHOD_CATEGORIES), 200
 
 
 @routes.route("/catches", methods=["POST"])
@@ -22,6 +34,9 @@ def create_catch():
     if "lat" not in data or "lon" not in data:
         return jsonify({"error": "Fields 'lat' and 'lon' are required"}), 400
 
+    if "species" not in data:
+        return jsonify({"error": "Field 'species' is required"}), 400
+
     db = SessionLocal()
     catch_service = CatchService(session=db)
 
@@ -29,8 +44,12 @@ def create_catch():
         catch_input = CatchCreate(
             lat=float(data["lat"]),
             lon=float(data["lon"]),
-            species=data.get("species", ""),
-            technique=data.get("technique"),
+            species=data.get("species"),
+            caught_at=data.get("caught_at"),
+            length_cm=data.get("length_cm"),
+            method_category=data.get("method_category"),
+            technique_detail=data.get("technique_detail"),
+            depth_m=data.get("depth_m"),
             notes=data.get("notes"),
         )
 
@@ -38,14 +57,18 @@ def create_catch():
             lat=catch_input.lat,
             lon=catch_input.lon,
             species=catch_input.species,
-            technique=catch_input.technique,
+            caught_at=catch_input.caught_at,
+            length_cm=catch_input.length_cm,
+            method_category=catch_input.method_category,
+            technique_detail=catch_input.technique_detail,
+            depth_m=catch_input.depth_m,
             notes=catch_input.notes,
         )
 
         catch_read = CatchRead.model_validate(new_catch)
         return jsonify(catch_read.model_dump()), 201
 
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, ValidationError):
         return jsonify({"error": "Invalid catch data"}), 400
 
     finally:
@@ -110,13 +133,19 @@ def update_catch(catch_id: str):
     catch_service = CatchService(session=db)
 
     try:
+        update_input = CatchUpdate.model_validate(data)
+
         updated_catch = catch_service.update_catch(
             catch_id=catch_id,
-            lat=float(data["lat"]) if "lat" in data else UNSET,
-            lon=float(data["lon"]) if "lon" in data else UNSET,
-            species=data["species"] if "species" in data else UNSET,
-            technique=data["technique"] if "technique" in data else UNSET,
-            notes=data["notes"] if "notes" in data else UNSET,
+            lat=update_input.lat if "lat" in data else UNSET,
+            lon=update_input.lon if "lon" in data else UNSET,
+            species=update_input.species if "species" in data else UNSET,
+            caught_at=update_input.caught_at if "caught_at" in data else UNSET,
+            length_cm=update_input.length_cm if "length_cm" in data else UNSET,
+            method_category=update_input.method_category if "method_category" in data else UNSET,
+            technique_detail=update_input.technique_detail if "technique_detail" in data else UNSET,
+            depth_m=update_input.depth_m if "depth_m" in data else UNSET,
+            notes=update_input.notes if "notes" in data else UNSET,
         )
 
         if updated_catch is None:
@@ -125,7 +154,7 @@ def update_catch(catch_id: str):
         catch_read = CatchRead.model_validate(updated_catch)
         return jsonify(catch_read.model_dump()), 200
 
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, ValidationError):
         return jsonify({"error": "Invalid catch data"}), 400
     finally:
         db.close()

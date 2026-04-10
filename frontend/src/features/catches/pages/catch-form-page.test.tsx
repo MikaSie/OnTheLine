@@ -10,6 +10,8 @@ const mockCreateMutate = vi.fn();
 const mockUpdateMutate = vi.fn();
 const mockUseParams = vi.fn(() => ({}));
 const mockUseCatch = vi.fn();
+const mockUseSpeciesOptions = vi.fn();
+const mockUseMethodCategories = vi.fn();
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual<typeof import("react-router-dom")>(
@@ -29,6 +31,8 @@ vi.mock("../../../components/ui/toaster", () => ({
 
 vi.mock("../hooks/use-catches", () => ({
   useCatch: (...args: unknown[]) => mockUseCatch(...args),
+  useSpeciesOptions: (...args: unknown[]) => mockUseSpeciesOptions(...args),
+  useMethodCategories: (...args: unknown[]) => mockUseMethodCategories(...args),
   useCreateCatch: (options?: { onSuccess?: (entry: { catch_id: string }) => void }) => ({
     isPending: false,
     mutate: (payload: unknown) => {
@@ -58,6 +62,8 @@ vi.mock("../components/catch-form", () => ({
       lat: number;
       lon: number;
       species?: string;
+      methodCategory?: string;
+      depthM?: number;
       technique?: string;
       notes?: string;
     }) => void;
@@ -70,13 +76,15 @@ vi.mock("../components/catch-form", () => ({
       <button
         type="button"
         onClick={() =>
-          onSubmit({
-            lat: 52.3676,
-            lon: 4.9041,
-            species: "  Sea Trout  ",
-            technique: "  Spinning  ",
-            notes: "  Near the rocks  ",
-          })
+        onSubmit({
+          lat: 52.3676,
+          lon: 4.9041,
+          species: "  Sea Trout  ",
+          methodCategory: "  Spinning  ",
+          depthM: 3.5,
+          technique: "  Spinning  ",
+          notes: "  Near the rocks  ",
+        })
         }
       >
         Submit mock form
@@ -93,11 +101,21 @@ describe("CatchFormPage", () => {
     mockUpdateMutate.mockReset();
     mockUseParams.mockReset();
     mockUseCatch.mockReset();
+    mockUseSpeciesOptions.mockReset();
+    mockUseMethodCategories.mockReset();
     mockUseParams.mockReturnValue({});
     mockUseCatch.mockReturnValue({
       isLoading: false,
       isError: false,
       data: undefined,
+    });
+    mockUseSpeciesOptions.mockReturnValue({
+      isLoading: false,
+      data: ["Perch", "Pike", "Sea Bass", "Sea Trout"],
+    });
+    mockUseMethodCategories.mockReturnValue({
+      isLoading: false,
+      data: ["Spinning", "Fly Fishing", "Other"],
     });
   });
 
@@ -114,7 +132,9 @@ describe("CatchFormPage", () => {
       lat: 52.3676,
       lon: 4.9041,
       species: "Sea Trout",
-      technique: "Spinning",
+      method_category: "Spinning",
+      depth_m: 3.5,
+      technique_detail: "Spinning",
       notes: "Near the rocks",
     });
     expect(mockPushToast).toHaveBeenCalledWith(
@@ -130,11 +150,13 @@ describe("CatchFormPage", () => {
       isError: false,
       data: {
         catch_id: "catch-123",
-        timestamp: "2026-04-09T10:00:00Z",
+        caught_at: "2026-04-09T10:00:00Z",
         lat: 52.1,
         lon: 4.1,
         species: "Sea Bass",
-        technique: "Fly",
+        method_category: "Spinning",
+        depth_m: 2.0,
+        technique_detail: "Fly",
         notes: "Initial",
       },
     });
@@ -156,7 +178,9 @@ describe("CatchFormPage", () => {
         lat: 52.3676,
         lon: 4.9041,
         species: "Sea Trout",
-        technique: "Spinning",
+        method_category: "Spinning",
+        depth_m: 3.5,
+        technique_detail: "Spinning",
         notes: "Near the rocks",
       },
     });

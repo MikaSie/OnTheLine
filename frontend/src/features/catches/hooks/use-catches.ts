@@ -11,6 +11,8 @@ import type { Catch, CreateCatchInput, UpdateCatchInput } from "../../../lib/typ
 export const catchKeys = {
   all: ["catches"] as const,
   detail: (catchId: string) => ["catches", catchId] as const,
+  speciesOptions: ["reference-data", "species"] as const,
+  methodCategories: ["reference-data", "method-categories"] as const,
 };
 
 export function useCatches() {
@@ -25,6 +27,22 @@ export function useCatch(catchId: string) {
     queryKey: catchKeys.detail(catchId),
     queryFn: () => api.getCatch(catchId),
     enabled: Boolean(catchId),
+  });
+}
+
+export function useSpeciesOptions() {
+  return useQuery({
+    queryKey: catchKeys.speciesOptions,
+    queryFn: api.getSpeciesOptions,
+    staleTime: Infinity,
+  });
+}
+
+export function useMethodCategories() {
+  return useQuery({
+    queryKey: catchKeys.methodCategories,
+    queryFn: api.getMethodCategories,
+    staleTime: Infinity,
   });
 }
 

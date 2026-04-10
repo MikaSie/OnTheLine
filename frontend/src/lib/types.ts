@@ -1,18 +1,26 @@
 export interface Catch {
   catch_id: string;
-  timestamp: string;
+  created_at?: string;
+  caught_at: string;
   lat: number;
   lon: number;
   species: string;
-  technique: string | null;
+  length_cm?: number | null;
+  method_category?: string | null;
+  technique_detail: string | null;
+  depth_m?: number | null;
   notes: string | null;
 }
 
 export interface CreateCatchInput {
   lat: number;
   lon: number;
-  species?: string;
-  technique?: string | null;
+  species: string;
+  caught_at?: string | null;
+  length_cm?: number | null;
+  method_category?: string | null;
+  technique_detail?: string | null;
+  depth_m?: number | null;
   notes?: string | null;
 }
 
@@ -20,7 +28,11 @@ export interface UpdateCatchInput {
   lat?: number;
   lon?: number;
   species?: string;
-  technique?: string | null;
+  caught_at?: string | null;
+  length_cm?: number | null;
+  method_category?: string | null;
+  technique_detail?: string | null;
+  depth_m?: number | null;
   notes?: string | null;
 }
 

@@ -48,13 +48,19 @@ describe("CatchForm", () => {
       <CatchForm
         mode="create"
         isSubmitting={false}
+        speciesOptions={["Perch", "Pike", "Sea Bass", "Sea Trout"]}
+        methodCategoryOptions={["Spinning", "Fly Fishing", "Other"]}
         onSubmit={onSubmit}
       />,
     );
 
     await user.type(screen.getByLabelText("Latitude"), "52,3676");
     await user.type(screen.getByLabelText("Longitude"), "4,9041");
-    await user.type(screen.getByLabelText("Species"), "Sea Trout");
+    await user.click(screen.getByRole("combobox", { name: "Species" }));
+    await user.click(screen.getByRole("option", { name: "Sea Trout" }));
+    await user.click(screen.getByRole("combobox", { name: "Method Category" }));
+    await user.click(screen.getByRole("option", { name: "Spinning" }));
+    await user.type(screen.getByLabelText("Depth (m)"), "3,5");
     await user.click(screen.getByRole("button", { name: "Log catch" }));
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
@@ -66,6 +72,8 @@ describe("CatchForm", () => {
         lat: 52.3676,
         lon: 4.9041,
         species: "Sea Trout",
+        methodCategory: "Spinning",
+        depthM: 3.5,
       }),
     );
   });
@@ -78,6 +86,8 @@ describe("CatchForm", () => {
       <CatchForm
         mode="create"
         isSubmitting={false}
+        speciesOptions={["Perch", "Pike", "Sea Bass", "Sea Trout"]}
+        methodCategoryOptions={["Spinning", "Fly Fishing", "Other"]}
         onSubmit={onSubmit}
       />,
     );
@@ -89,7 +99,11 @@ describe("CatchForm", () => {
     expect(screen.getByText("New place")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Confirm new location" }));
-    await user.type(screen.getByLabelText("Species"), "Sea Bass");
+    await user.click(screen.getByRole("combobox", { name: "Species" }));
+    await user.click(screen.getByRole("option", { name: "Sea Bass" }));
+    await user.click(screen.getByRole("combobox", { name: "Method Category" }));
+    await user.click(screen.getByRole("option", { name: "Fly Fishing" }));
+    await user.type(screen.getByLabelText("Depth (m)"), "1.2");
     await user.click(screen.getByRole("button", { name: "Log catch" }));
 
     expect(onSubmit).toHaveBeenCalledWith(
@@ -97,6 +111,8 @@ describe("CatchForm", () => {
         lat: 53.123456,
         lon: 6.654321,
         species: "Sea Bass",
+        methodCategory: "Fly Fishing",
+        depthM: 1.2,
       }),
       expect.anything(),
     );
@@ -109,6 +125,8 @@ describe("CatchForm", () => {
       <CatchForm
         mode="create"
         isSubmitting={false}
+        speciesOptions={["Perch", "Pike", "Sea Bass", "Sea Trout"]}
+        methodCategoryOptions={["Spinning", "Fly Fishing", "Other"]}
         onSubmit={vi.fn()}
       />,
     );
@@ -124,14 +142,18 @@ describe("CatchForm", () => {
       <CatchForm
         mode="edit"
         isSubmitting={false}
+        speciesOptions={["Perch", "Pike", "Sea Bass", "Sea Trout"]}
+        methodCategoryOptions={["Spinning", "Fly Fishing", "Other"]}
         onSubmit={vi.fn()}
         initialValues={{
           catch_id: "catch-1",
-          timestamp: "2026-04-09T10:00:00Z",
+          caught_at: "2026-04-09T10:00:00Z",
           lat: 51.987654,
           lon: 4.123456,
           species: "Pike",
-          technique: "Jerkbait",
+          method_category: "Spinning",
+          depth_m: 2.0,
+          technique_detail: "Jerkbait",
           notes: "Canal edge",
         }}
       />,
@@ -149,14 +171,18 @@ describe("CatchForm", () => {
       <CatchForm
         mode="edit"
         isSubmitting={false}
+        speciesOptions={["Perch", "Pike", "Sea Bass", "Sea Trout"]}
+        methodCategoryOptions={["Spinning", "Fly Fishing", "Other"]}
         onSubmit={vi.fn()}
         initialValues={{
           catch_id: "catch-1",
-          timestamp: "2026-04-09T10:00:00Z",
+          caught_at: "2026-04-09T10:00:00Z",
           lat: 51.987654,
           lon: 4.123456,
           species: "Pike",
-          technique: "Jerkbait",
+          method_category: "Spinning",
+          depth_m: 2.0,
+          technique_detail: "Jerkbait",
           notes: "Canal edge",
         }}
       />,

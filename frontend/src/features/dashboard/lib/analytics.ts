@@ -16,18 +16,18 @@ export function buildSummary(catches: Catch[]): DashboardSummary {
   ).size;
 
   const uniqueTechniques = new Set(
-    catches.map((entry) => entry.technique?.trim()).filter(Boolean),
+    catches.map((entry) => entry.technique_detail?.trim()).filter(Boolean),
   ).size;
 
   const latest = [...catches]
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .sort((a, b) => new Date(b.caught_at).getTime() - new Date(a.caught_at).getTime())
     .at(0);
 
   return {
     totalCatches: catches.length,
     uniqueSpecies,
     techniquesTracked: uniqueTechniques,
-    latestCatchAt: latest?.timestamp ?? null,
+    latestCatchAt: latest?.caught_at ?? null,
   };
 }
 
@@ -54,7 +54,7 @@ export function buildSpeciesMix(catches: Catch[]) {
 }
 
 export function buildTechniqueMix(catches: Catch[]) {
-  return groupCounts(catches, (entry) => entry.technique);
+  return groupCounts(catches, (entry) => entry.technique_detail);
 }
 
 export function buildRecentActivity(catches: Catch[]): ActivityDatum[] {
@@ -69,7 +69,7 @@ export function buildRecentActivity(catches: Catch[]): ActivityDatum[] {
   const byDate = new Map(series.map((entry) => [entry.date, 0]));
 
   catches.forEach((entry) => {
-    const key = new Date(entry.timestamp).toISOString().slice(0, 10);
+    const key = new Date(entry.caught_at).toISOString().slice(0, 10);
     if (byDate.has(key)) {
       byDate.set(key, (byDate.get(key) ?? 0) + 1);
     }

@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -5,6 +7,12 @@ from sqlalchemy.orm import sessionmaker
 from app.core.catch_entity import CatchEntity
 from app.db.models import Base, CatchModel
 from app.services.catch_service import CatchService
+
+
+def as_utc(value: datetime) -> datetime:
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value
 
 
 @pytest.fixture
@@ -31,7 +39,8 @@ def test_create_catch_stores_and_returns_entity(service, session):
         lat=52.0,
         lon=4.0,
         species="Sea Trout",
-        technique="Spinning",
+        length_cm=63,
+        technique_detail="Spinning",
         notes="Caught near rocks",
     )
 
@@ -39,7 +48,8 @@ def test_create_catch_stores_and_returns_entity(service, session):
     assert catch.lat == 52.0
     assert catch.lon == 4.0
     assert catch.species == "Sea Trout"
-    assert catch.technique == "Spinning"
+    assert catch.length_cm == 63.0
+    assert catch.technique_detail == "Spinning"
     assert catch.notes == "Caught near rocks"
 
     db_catch = session.get(CatchModel, catch.catch_id)
@@ -48,8 +58,84 @@ def test_create_catch_stores_and_returns_entity(service, session):
     assert db_catch.lat == 52.0
     assert db_catch.lon == 4.0
     assert db_catch.species == "Sea Trout"
-    assert db_catch.technique == "Spinning"
+    assert db_catch.length_cm == 63.0
+    assert as_utc(db_catch.caught_at) == catch.caught_at
+    assert db_catch.technique_detail == "Spinning"
     assert db_catch.notes == "Caught near rocks"
+
+
+def test_create_catch_defaults_caught_at_to_created_at(service, session):
+    catch = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+    )
+
+    assert catch.caught_at == catch.created_at
+
+    db_catch = session.get(CatchModel, catch.catch_id)
+    assert db_catch is not None
+    assert as_utc(db_catch.caught_at) == as_utc(db_catch.created_at)
+
+
+def test_create_catch_uses_given_caught_at(service, session):
+    fixed_caught_at = datetime(2026, 4, 8, 8, 45, tzinfo=timezone.utc)
+
+    catch = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        caught_at=fixed_caught_at,
+    )
+
+    assert catch.caught_at == fixed_caught_at
+
+    db_catch = session.get(CatchModel, catch.catch_id)
+    assert db_catch is not None
+    assert as_utc(db_catch.caught_at) == fixed_caught_at
+
+
+def test_create_catch_stores_length_cm(service, session):
+    catch = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        length_cm=71.5,
+    )
+
+    assert catch.length_cm == 71.5
+
+    db_catch = session.get(CatchModel, catch.catch_id)
+    assert db_catch is not None
+    assert db_catch.length_cm == catch.length_cm
+
+
+def test_create_catch_stores_method_category(service, session):
+    catch = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        method_category="Spinning",
+    )
+
+    db_catch = session.get(CatchModel, catch.catch_id)
+    assert db_catch is not None
+    assert db_catch.method_category == "Spinning"
+
+
+def test_create_catch_stores_depth_m(service, session):
+    catch = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        depth_m=3.5,
+    )
+
+    assert catch.depth_m == 3.5
+
+    db_catch = session.get(CatchModel, catch.catch_id)
+    assert db_catch is not None
+    assert db_catch.depth_m == catch.depth_m
 
 
 def test_create_catch_propagates_entity_validation_errors(service):
@@ -57,6 +143,7 @@ def test_create_catch_propagates_entity_validation_errors(service):
         service.create_catch(
             lat=100.0,
             lon=4.0,
+            species="Perch",
         )
 
 
@@ -69,7 +156,7 @@ def test_list_catches_returns_all_catches(service):
     second = service.create_catch(
         lat=53.0,
         lon=5.0,
-        species="Bass",
+        species="Perch",
     )
 
     catches = service.list_catches()
@@ -87,7 +174,7 @@ def test_get_catch_returns_existing_catch(service):
         lat=52.0,
         lon=4.0,
         species="Sea Trout",
-        technique="Spinning",
+        technique_detail="Spinning",
         notes="Morning fish",
     )
 
@@ -99,7 +186,7 @@ def test_get_catch_returns_existing_catch(service):
     assert found.lat == created.lat
     assert found.lon == created.lon
     assert found.species == created.species
-    assert found.technique == created.technique
+    assert found.technique_detail == created.technique_detail
     assert found.notes == created.notes
 
 
@@ -114,7 +201,7 @@ def test_update_catch_updates_existing_catch(service, session):
         lat=52.0,
         lon=4.0,
         species="Sea Trout",
-        technique="Spinning",
+        technique_detail="Spinning",
         notes="Morning fish",
     )
 
@@ -122,8 +209,9 @@ def test_update_catch_updates_existing_catch(service, session):
         catch_id=created.catch_id,
         lat=40.0,
         lon=10.0,
-        species="GT",
-        technique="Popping",
+        species="Pike",
+        length_cm=118,
+        technique_detail="Popping",
         notes="Updated notes",
     )
 
@@ -132,17 +220,43 @@ def test_update_catch_updates_existing_catch(service, session):
     assert updated.catch_id == created.catch_id
     assert updated.lat == 40.0
     assert updated.lon == 10.0
-    assert updated.species == "GT"
-    assert updated.technique == "Popping"
+    assert updated.species == "Pike"
+    assert updated.length_cm == 118.0
+    assert updated.technique_detail == "Popping"
     assert updated.notes == "Updated notes"
+    assert updated.caught_at == created.caught_at
 
     db_catch = session.get(CatchModel, created.catch_id)
     assert db_catch is not None
     assert db_catch.lat == 40.0
     assert db_catch.lon == 10.0
-    assert db_catch.species == "GT"
-    assert db_catch.technique == "Popping"
+    assert db_catch.species == "Pike"
+    assert db_catch.length_cm == 118.0
+    assert db_catch.technique_detail == "Popping"
     assert db_catch.notes == "Updated notes"
+
+
+def test_update_catch_can_update_caught_at(service, session):
+    created = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+    )
+    new_caught_at = datetime(2026, 4, 9, 6, 30, tzinfo=timezone.utc)
+
+    updated = service.update_catch(
+        catch_id=created.catch_id,
+        caught_at=new_caught_at,
+    )
+
+    assert updated is not None
+    assert updated.created_at == created.created_at
+    assert updated.caught_at == new_caught_at
+
+    db_catch = session.get(CatchModel, created.catch_id)
+    assert db_catch is not None
+    assert as_utc(db_catch.created_at) == created.created_at
+    assert as_utc(db_catch.caught_at) == new_caught_at
 
 
 def test_update_catch_can_update_only_species(service, session):
@@ -150,7 +264,8 @@ def test_update_catch_can_update_only_species(service, session):
         lat=52.0,
         lon=4.0,
         species="Sea Trout",
-        technique="Spinning",
+        length_cm=63,
+        technique_detail="Spinning",
         notes="Morning fish",
     )
 
@@ -165,7 +280,8 @@ def test_update_catch_can_update_only_species(service, session):
     assert updated.lat == 52.0
     assert updated.lon == 4.0
     assert updated.species == "Sea Bass"
-    assert updated.technique == "Spinning"
+    assert updated.length_cm == 63.0
+    assert updated.technique_detail == "Spinning"
     assert updated.notes == "Morning fish"
 
     db_catch = session.get(CatchModel, created.catch_id)
@@ -173,8 +289,82 @@ def test_update_catch_can_update_only_species(service, session):
     assert db_catch.lat == 52.0
     assert db_catch.lon == 4.0
     assert db_catch.species == "Sea Bass"
-    assert db_catch.technique == "Spinning"
+    assert db_catch.length_cm == 63.0
+    assert db_catch.technique_detail == "Spinning"
     assert db_catch.notes == "Morning fish"
+
+
+def test_update_catch_can_update_length_cm(service, session):
+    created = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        length_cm=63,
+    )
+
+    updated = service.update_catch(
+        catch_id=created.catch_id,
+        length_cm=68.5,
+    )
+
+    assert updated is not None
+    assert updated.length_cm == 68.5
+
+    db_catch = session.get(CatchModel, created.catch_id)
+    assert db_catch is not None
+    assert db_catch.length_cm == 68.5
+
+
+def test_update_catch_can_update_method_category(service, session):
+    created = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        method_category="Spinning",
+    )
+
+    updated = service.update_catch(
+        catch_id=created.catch_id,
+        method_category="Vertical Fishing",
+    )
+
+    assert updated is not None
+    assert updated.method_category == "Vertical Fishing"
+
+    db_catch = session.get(CatchModel, created.catch_id)
+    assert db_catch is not None
+    assert db_catch.method_category == "Vertical Fishing"
+
+
+def test_update_catch_can_update_depth_m(service, session):
+    created = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        depth_m=2.0,
+    )
+
+    updated = service.update_catch(
+        catch_id=created.catch_id,
+        depth_m=4.5,
+    )
+
+    assert updated is not None
+    assert updated.depth_m == 4.5
+
+    db_catch = session.get(CatchModel, created.catch_id)
+    assert db_catch is not None
+    assert db_catch.depth_m == 4.5
+
+
+def test_create_catch_rejects_negative_depth_m(service):
+    with pytest.raises(ValueError, match="depth_m must be 0 or greater"):
+        service.create_catch(
+            lat=52.0,
+            lon=4.0,
+            species="Perch",
+            depth_m=-1,
+        )
 
 
 def test_update_catch_returns_none_when_missing(service):
@@ -182,8 +372,8 @@ def test_update_catch_returns_none_when_missing(service):
         catch_id="does-not-exist",
         lat=40.0,
         lon=10.0,
-        species="GT",
-        technique="Popping",
+        species="Pike",
+        technique_detail="Popping",
         notes="Updated notes",
     )
 
@@ -211,11 +401,35 @@ def test_delete_catch_returns_false_when_missing(service):
 
 
 def test_update_catch_should_reject_invalid_latitude(service):
-    created = service.create_catch(lat=52.0, lon=4.0)
+    created = service.create_catch(lat=52.0, lon=4.0, species="Perch")
 
     with pytest.raises(ValueError):
         service.update_catch(
             catch_id=created.catch_id,
             lat=100.0,
             lon=4.0,
+        )
+
+
+def test_create_catch_rejects_species_outside_supported_list(service):
+    with pytest.raises(
+        ValueError, match="Species must be selected from the supported species list"
+    ):
+        service.create_catch(
+            lat=52.0,
+            lon=4.0,
+            species="Golden Trevally",
+        )
+
+
+def test_create_catch_rejects_method_category_outside_supported_list(service):
+    with pytest.raises(
+        ValueError,
+        match="Method category must be selected from the supported categories list",
+    ):
+        service.create_catch(
+            lat=52.0,
+            lon=4.0,
+            species="Perch",
+            method_category="Handlining",
         )

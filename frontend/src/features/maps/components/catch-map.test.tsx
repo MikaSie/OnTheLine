@@ -49,11 +49,11 @@ vi.mock("react-leaflet", () => ({
 const catches = [
   {
     catch_id: "catch-1",
-    timestamp: "2026-04-09T10:00:00Z",
+    caught_at: "2026-04-09T10:00:00Z",
     lat: 52.3676,
     lon: 4.9041,
     species: "Sea Trout",
-    technique: "Spinning",
+    technique_detail: "Spinning",
     notes: "Near structure",
   },
 ];
@@ -148,11 +148,11 @@ describe("CatchMap", () => {
             ...catches,
             {
               catch_id: "catch-2",
-              timestamp: "2026-04-08T10:00:00Z",
+              caught_at: "2026-04-08T10:00:00Z",
               lat: 53.1,
               lon: 5.1,
               species: "Sea Bass",
-              technique: "Fly",
+              technique_detail: "Fly",
               notes: null,
             },
           ]}
@@ -176,11 +176,11 @@ describe("CatchMap", () => {
           catches={[
             {
               catch_id: "invalid",
-              timestamp: "2026-04-09T10:00:00Z",
+              caught_at: "2026-04-09T10:00:00Z",
               lat: 150,
               lon: 4.9,
               species: "Impossible",
-              technique: null,
+              technique_detail: null,
               notes: null,
             },
           ]}

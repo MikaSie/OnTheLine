@@ -34,11 +34,11 @@ describe("DashboardMapCard", () => {
         catches={[
           {
             catch_id: "catch-1",
-            timestamp: "2026-04-09T10:00:00Z",
+            caught_at: "2026-04-09T10:00:00Z",
             lat: 52.3,
             lon: 4.9,
             species: "Sea Trout",
-            technique: "Spinning",
+            technique_detail: "Spinning",
             notes: null,
           },
         ]}

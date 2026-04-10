@@ -35,7 +35,43 @@ const coordinateField = (label: string, min: number, max: number) =>
 export const catchFormSchema = z.object({
   lat: coordinateField("Latitude", -90, 90),
   lon: coordinateField("Longitude", -180, 180),
-  species: z.string().max(100, "Keep species under 100 characters").optional(),
+  species: z
+    .string()
+    .trim()
+    .min(1, "Species is required")
+    .max(100, "Keep species under 100 characters"),
+  methodCategory: z
+    .string()
+    .trim()
+    .min(1, "Method category is required")
+    .max(100, "Keep method category under 100 characters"),
+  depthM: z.preprocess(
+    (value) => {
+      if (value === "" || value === null || value === undefined) {
+        return undefined;
+      }
+
+      if (typeof value === "number") {
+        return Number.isFinite(value) ? value : undefined;
+      }
+
+      if (typeof value === "string") {
+        const normalized = value.trim().replace(",", ".");
+        if (!normalized) {
+          return undefined;
+        }
+
+        const parsed = Number(normalized);
+        return Number.isFinite(parsed) ? parsed : undefined;
+      }
+
+      return undefined;
+    },
+    z
+      .number({ invalid_type_error: "Depth must be a number" })
+      .min(0, "Depth must be 0 or greater")
+      .optional(),
+  ),
   technique: z
     .string()
     .max(100, "Keep technique under 100 characters")

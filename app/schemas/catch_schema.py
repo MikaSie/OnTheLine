@@ -11,8 +11,24 @@ from pydantic import BaseModel, ConfigDict
 class CatchCreate(BaseModel):
     lat: float
     lon: float
-    species: str = ""
-    technique: str | None = None
+    species: str
+    caught_at: datetime | None = None
+    length_cm: float | None = None
+    method_category: str | None = None
+    technique_detail: str | None = None
+    depth_m: float | None = None
+    notes: str | None = None
+
+
+class CatchUpdate(BaseModel):
+    lat: float | None = None
+    lon: float | None = None
+    species: str | None = None
+    caught_at: datetime | None = None
+    length_cm: float | None = None
+    method_category: str | None = None
+    technique_detail: str | None = None
+    depth_m: float | None = None
     notes: str | None = None
 
 
@@ -20,9 +36,13 @@ class CatchRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     catch_id: str
-    timestamp: datetime
+    created_at: datetime
     lat: float
     lon: float
     species: str
-    technique: str | None = None
+    caught_at: datetime
+    length_cm: float | None = None
+    method_category: str | None = None
+    technique_detail: str | None = None
+    depth_m: float | None = None
     notes: str | None = None

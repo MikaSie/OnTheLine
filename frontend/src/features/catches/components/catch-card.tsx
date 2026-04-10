@@ -25,7 +25,7 @@ export function CatchCard({ catchEntry }: { catchEntry: Catch }) {
         <div className="grid gap-3 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Waves className="h-4 w-4 text-primary" />
-            <span>{catchEntry.technique || "Technique not specified"}</span>
+            <span>{catchEntry.technique_detail || "Technique not specified"}</span>
           </div>
           <div className="flex items-center gap-2">
             <MapPinned className="h-4 w-4 text-primary" />
@@ -34,7 +34,7 @@ export function CatchCard({ catchEntry }: { catchEntry: Catch }) {
               {formatCoordinate(catchEntry.lon, "lon")}
             </span>
           </div>
-          <p>{formatDateTime(catchEntry.timestamp)}</p>
+          <p>{formatDateTime(catchEntry.caught_at)}</p>
         </div>
 
         {catchEntry.notes ? (
