@@ -44,6 +44,30 @@ def test_create_created_at_when_omitted():
     assert isinstance(catch.created_at, datetime)
 
 
+def test_create_catch_defaults_caught_at_to_created_at():
+    catch = CatchEntity.new(
+        lat=52.0,
+        lon=4.0,
+    )
+
+    assert catch.caught_at == catch.created_at
+
+
+def test_create_catch_uses_given_caught_at():
+    fixed_created_at = datetime(2026, 4, 8, 10, 0, tzinfo=timezone.utc)
+    fixed_caught_at = datetime(2026, 4, 8, 8, 45, tzinfo=timezone.utc)
+
+    catch = CatchEntity.new(
+        lat=52.0,
+        lon=4.0,
+        created_at=fixed_created_at,
+        caught_at=fixed_caught_at,
+    )
+
+    assert catch.created_at == fixed_created_at
+    assert catch.caught_at == fixed_caught_at
+
+
 def test_convert_lat_lon_to_float():
     catch = CatchEntity.new(
         lat=52,

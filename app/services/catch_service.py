@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from sqlalchemy.orm import Session
 
 from app.core.catch_entity import CatchEntity
@@ -17,13 +19,19 @@ class CatchService:
     def __init__(self, session: Session) -> None:
         self._db = session
 
+    def _ensure_utc(self, value: datetime) -> datetime:
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value
+
     def _to_entity(self, db_catch: CatchModel) -> CatchEntity:
         return CatchEntity(
             catch_id=db_catch.catch_id,
-            created_at=db_catch.created_at,
+            created_at=self._ensure_utc(db_catch.created_at),
             lat=db_catch.lat,
             lon=db_catch.lon,
             species=db_catch.species,
+            caught_at=self._ensure_utc(db_catch.caught_at),
             technique_detail=db_catch.technique_detail,
             notes=db_catch.notes,
         )
@@ -34,6 +42,7 @@ class CatchService:
         lat: float,
         lon: float,
         species: str = "",
+        caught_at: datetime | None = None,
         technique_detail: str | None = None,
         notes: str | None = None,
     ) -> CatchEntity:
@@ -42,6 +51,7 @@ class CatchService:
             lat=lat,
             lon=lon,
             species=species,
+            caught_at=caught_at,
             technique_detail=technique_detail,
             notes=notes,
         )
@@ -52,6 +62,7 @@ class CatchService:
             lat=new_catch.lat,
             lon=new_catch.lon,
             species=new_catch.species,
+            caught_at=new_catch.caught_at,
             technique_detail=new_catch.technique_detail,
             notes=new_catch.notes,
         )
@@ -77,6 +88,7 @@ class CatchService:
         lat: float | object = UNSET,
         lon: float | object = UNSET,
         species: str | object = UNSET,
+        caught_at: datetime | None | object = UNSET,
         technique_detail: str | None | object = UNSET,
         notes: str | None | object = UNSET,
     ) -> CatchEntity | None:
@@ -92,6 +104,8 @@ class CatchService:
             lon = old_catch.lon
         if species is UNSET:
             species = old_catch.species
+        if caught_at is UNSET:
+            caught_at = old_catch.caught_at
         if technique_detail is UNSET:
             technique_detail = old_catch.technique_detail
         if notes is UNSET:
@@ -101,6 +115,7 @@ class CatchService:
             lat=lat,
             lon=lon,
             species=species,
+            caught_at=caught_at,
             technique_detail=technique_detail,
             notes=notes,
             created_at=old_catch.created_at,
@@ -109,6 +124,7 @@ class CatchService:
         old_catch.lat = validated.lat
         old_catch.lon = validated.lon
         old_catch.species = validated.species
+        old_catch.caught_at = validated.caught_at
         old_catch.technique_detail = validated.technique_detail
         old_catch.notes = validated.notes
 

@@ -13,6 +13,7 @@ class CatchEntity:
     lat: float
     lon: float
     species: str
+    caught_at: datetime
     technique_detail: str | None
     notes: str | None
 
@@ -22,9 +23,10 @@ class CatchEntity:
         lat: float,
         lon: float,
         species: str = "",
+        created_at: Optional[datetime] = None,
+        caught_at: Optional[datetime] = None,
         technique_detail: Optional[str] = None,
         notes: Optional[str] = None,
-        created_at: Optional[datetime] = None,
     ) -> "CatchEntity":
         # --- Type + basic validation ---
         lat = float(lat)
@@ -49,6 +51,7 @@ class CatchEntity:
         species = species.strip()
 
         created_at = created_at or datetime.now(timezone.utc)
+        caught_at = caught_at or created_at
 
         return CatchEntity(
             catch_id=str(uuid4()),
@@ -56,6 +59,7 @@ class CatchEntity:
             lat=lat,
             lon=lon,
             species=species,
+            caught_at=caught_at,
             technique_detail=technique_detail,
             notes=notes,
         )

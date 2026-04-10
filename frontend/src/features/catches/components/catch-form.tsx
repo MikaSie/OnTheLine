@@ -31,7 +31,7 @@ export function CatchForm({
       lat: initialValues?.lat,
       lon: initialValues?.lon,
       species: initialValues?.species ?? "",
-      technique: initialValues?.technique ?? "",
+      technique: initialValues?.technique_detail ?? "",
       notes: initialValues?.notes ?? "",
     },
   });
@@ -52,7 +52,7 @@ export function CatchForm({
       lat: initialValues?.lat,
       lon: initialValues?.lon,
       species: initialValues?.species ?? "",
-      technique: initialValues?.technique ?? "",
+      technique: initialValues?.technique_detail ?? "",
       notes: initialValues?.notes ?? "",
     });
   }, [initialValues, reset]);

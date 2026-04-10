@@ -75,11 +75,11 @@ describe("CatchDetailPage", () => {
       isError: false,
       data: {
         catch_id: "catch-123",
-        timestamp: "2026-04-09T10:00:00Z",
+        caught_at: "2026-04-09T10:00:00Z",
         lat: 52.3676,
         lon: 4.9041,
         species: "Sea Trout",
-        technique: "Spinning",
+        technique_detail: "Spinning",
         notes: "Near the jetty",
       },
     });

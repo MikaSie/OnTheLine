@@ -33,7 +33,7 @@ export function buildCatchAreaBuckets(catches: Catch[]): CatchAreaBucket[] {
         count: 1,
         totalLat: entry.lat,
         totalLon: entry.lon,
-        latestTimestamp: entry.timestamp,
+        latestTimestamp: entry.caught_at,
         areaLat,
         areaLon,
       });
@@ -44,8 +44,8 @@ export function buildCatchAreaBuckets(catches: Catch[]): CatchAreaBucket[] {
     current.totalLat += entry.lat;
     current.totalLon += entry.lon;
 
-    if (new Date(entry.timestamp).getTime() > new Date(current.latestTimestamp).getTime()) {
-      current.latestTimestamp = entry.timestamp;
+    if (new Date(entry.caught_at).getTime() > new Date(current.latestTimestamp).getTime()) {
+      current.latestTimestamp = entry.caught_at;
     }
   });
 

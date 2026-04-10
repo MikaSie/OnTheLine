@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from app.db.session import SessionLocal
-from app.schemas.catch_schema import CatchCreate, CatchRead
+from app.schemas.catch_schema import CatchCreate, CatchRead, CatchUpdate
 from app.services.catch_service import UNSET, CatchService
 
 routes = Blueprint("routes", __name__)
@@ -30,6 +30,7 @@ def create_catch():
             lat=float(data["lat"]),
             lon=float(data["lon"]),
             species=data.get("species", ""),
+            caught_at=data.get("caught_at"),
             technique_detail=data.get("technique_detail"),
             notes=data.get("notes"),
         )
@@ -38,6 +39,7 @@ def create_catch():
             lat=catch_input.lat,
             lon=catch_input.lon,
             species=catch_input.species,
+            caught_at=catch_input.caught_at,
             technique_detail=catch_input.technique_detail,
             notes=catch_input.notes,
         )
@@ -110,15 +112,18 @@ def update_catch(catch_id: str):
     catch_service = CatchService(session=db)
 
     try:
+        update_input = CatchUpdate.model_validate(data)
+
         updated_catch = catch_service.update_catch(
             catch_id=catch_id,
-            lat=float(data["lat"]) if "lat" in data else UNSET,
-            lon=float(data["lon"]) if "lon" in data else UNSET,
-            species=data["species"] if "species" in data else UNSET,
-            technique_detail=data["technique_detail"]
+            lat=update_input.lat if "lat" in data else UNSET,
+            lon=update_input.lon if "lon" in data else UNSET,
+            species=update_input.species if "species" in data else UNSET,
+            caught_at=update_input.caught_at if "caught_at" in data else UNSET,
+            technique_detail=update_input.technique_detail
             if "technique_detail" in data
             else UNSET,
-            notes=data["notes"] if "notes" in data else UNSET,
+            notes=update_input.notes if "notes" in data else UNSET,
         )
 
         if updated_catch is None:

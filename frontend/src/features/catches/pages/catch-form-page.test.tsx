@@ -70,13 +70,13 @@ vi.mock("../components/catch-form", () => ({
       <button
         type="button"
         onClick={() =>
-          onSubmit({
-            lat: 52.3676,
-            lon: 4.9041,
-            species: "  Sea Trout  ",
-            technique: "  Spinning  ",
-            notes: "  Near the rocks  ",
-          })
+        onSubmit({
+          lat: 52.3676,
+          lon: 4.9041,
+          species: "  Sea Trout  ",
+          technique: "  Spinning  ",
+          notes: "  Near the rocks  ",
+        })
         }
       >
         Submit mock form
@@ -114,7 +114,7 @@ describe("CatchFormPage", () => {
       lat: 52.3676,
       lon: 4.9041,
       species: "Sea Trout",
-      technique: "Spinning",
+      technique_detail: "Spinning",
       notes: "Near the rocks",
     });
     expect(mockPushToast).toHaveBeenCalledWith(
@@ -130,11 +130,11 @@ describe("CatchFormPage", () => {
       isError: false,
       data: {
         catch_id: "catch-123",
-        timestamp: "2026-04-09T10:00:00Z",
+        caught_at: "2026-04-09T10:00:00Z",
         lat: 52.1,
         lon: 4.1,
         species: "Sea Bass",
-        technique: "Fly",
+        technique_detail: "Fly",
         notes: "Initial",
       },
     });
@@ -156,7 +156,7 @@ describe("CatchFormPage", () => {
         lat: 52.3676,
         lon: 4.9041,
         species: "Sea Trout",
-        technique: "Spinning",
+        technique_detail: "Spinning",
         notes: "Near the rocks",
       },
     });

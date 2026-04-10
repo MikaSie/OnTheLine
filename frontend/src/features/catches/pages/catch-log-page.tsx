@@ -32,11 +32,11 @@ export function CatchLogPage() {
         !normalizedSearch ||
         entry.species.toLowerCase().includes(normalizedSearch) ||
         entry.notes?.toLowerCase().includes(normalizedSearch) ||
-        entry.technique?.toLowerCase().includes(normalizedSearch);
+        entry.technique_detail?.toLowerCase().includes(normalizedSearch);
 
       const matchesTechnique =
         technique === "all" ||
-        (entry.technique ?? "Unspecified").toLowerCase() === technique.toLowerCase();
+        (entry.technique_detail ?? "Unspecified").toLowerCase() === technique.toLowerCase();
 
       const entryArea = areas.find((bucket) =>
         entry.lat >= bucket.centerLat - 0.051 &&
@@ -52,18 +52,18 @@ export function CatchLogPage() {
 
     return [...visible].sort((left, right) => {
       if (sort === "oldest") {
-        return new Date(left.timestamp).getTime() - new Date(right.timestamp).getTime();
+        return new Date(left.caught_at).getTime() - new Date(right.caught_at).getTime();
       }
 
       if (sort === "species") {
         return left.species.localeCompare(right.species);
       }
 
-      return new Date(right.timestamp).getTime() - new Date(left.timestamp).getTime();
+      return new Date(right.caught_at).getTime() - new Date(left.caught_at).getTime();
     });
   }, [area, areas, catches, search, sort, technique]);
 
-  const techniques = [...new Set(catches.map((entry) => entry.technique).filter(Boolean))] as string[];
+  const techniques = [...new Set(catches.map((entry) => entry.technique_detail).filter(Boolean))] as string[];
   const selectedArea = areas.find((entry) => entry.key === area);
   const activeFilters = [
     search.trim() ? `Search: ${search.trim()}` : null,

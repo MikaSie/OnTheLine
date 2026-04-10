@@ -5,7 +5,7 @@ import type { Catch } from "../../../lib/types";
 
 export function ActivityTimeline({ catches }: { catches: Catch[] }) {
   const entries = [...catches]
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .sort((a, b) => new Date(b.caught_at).getTime() - new Date(a.caught_at).getTime())
     .slice(0, 5);
 
   return (
@@ -23,11 +23,11 @@ export function ActivityTimeline({ catches }: { catches: Catch[] }) {
               {entry.species || "Unspecified species"}
             </p>
             <p className="text-sm text-muted-foreground">
-              {entry.technique || "Technique not specified"} at{" "}
+              {entry.technique_detail || "Technique not specified"} at{" "}
               {entry.lat.toFixed(2)}, {entry.lon.toFixed(2)}
             </p>
             <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">
-              {formatDateTime(entry.timestamp)}
+              {formatDateTime(entry.caught_at)}
             </p>
           </div>
         </div>

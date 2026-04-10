@@ -154,10 +154,10 @@ export function CatchMap({
                 <div>
                   <p className="font-semibold">{entry.species || "Unspecified species"}</p>
                   <p className="text-xs text-slate-600">
-                    {entry.technique || "Technique not specified"}
+                    {entry.technique_detail || "Technique not specified"}
                   </p>
                 </div>
-                <p>{formatDateTime(entry.timestamp)}</p>
+                <p>{formatDateTime(entry.caught_at)}</p>
                 <p>
                   {formatCoordinate(entry.lat, "lat")} / {formatCoordinate(entry.lon, "lon")}
                 </p>

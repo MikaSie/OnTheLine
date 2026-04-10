@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -5,6 +7,12 @@ from sqlalchemy.orm import sessionmaker
 from app.core.catch_entity import CatchEntity
 from app.db.models import Base, CatchModel
 from app.services.catch_service import CatchService
+
+
+def as_utc(value: datetime) -> datetime:
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value
 
 
 @pytest.fixture
@@ -48,8 +56,40 @@ def test_create_catch_stores_and_returns_entity(service, session):
     assert db_catch.lat == 52.0
     assert db_catch.lon == 4.0
     assert db_catch.species == "Sea Trout"
+    assert as_utc(db_catch.caught_at) == catch.caught_at
     assert db_catch.technique_detail == "Spinning"
     assert db_catch.notes == "Caught near rocks"
+
+
+def test_create_catch_defaults_caught_at_to_created_at(service, session):
+    catch = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+    )
+
+    assert catch.caught_at == catch.created_at
+
+    db_catch = session.get(CatchModel, catch.catch_id)
+    assert db_catch is not None
+    assert as_utc(db_catch.caught_at) == as_utc(db_catch.created_at)
+
+
+def test_create_catch_uses_given_caught_at(service, session):
+    fixed_caught_at = datetime(2026, 4, 8, 8, 45, tzinfo=timezone.utc)
+
+    catch = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        caught_at=fixed_caught_at,
+    )
+
+    assert catch.caught_at == fixed_caught_at
+
+    db_catch = session.get(CatchModel, catch.catch_id)
+    assert db_catch is not None
+    assert as_utc(db_catch.caught_at) == fixed_caught_at
 
 
 def test_create_catch_propagates_entity_validation_errors(service):
@@ -135,6 +175,7 @@ def test_update_catch_updates_existing_catch(service, session):
     assert updated.species == "GT"
     assert updated.technique_detail == "Popping"
     assert updated.notes == "Updated notes"
+    assert updated.caught_at == created.caught_at
 
     db_catch = session.get(CatchModel, created.catch_id)
     assert db_catch is not None
@@ -143,6 +184,29 @@ def test_update_catch_updates_existing_catch(service, session):
     assert db_catch.species == "GT"
     assert db_catch.technique_detail == "Popping"
     assert db_catch.notes == "Updated notes"
+
+
+def test_update_catch_can_update_caught_at(service, session):
+    created = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+    )
+    new_caught_at = datetime(2026, 4, 9, 6, 30, tzinfo=timezone.utc)
+
+    updated = service.update_catch(
+        catch_id=created.catch_id,
+        caught_at=new_caught_at,
+    )
+
+    assert updated is not None
+    assert updated.created_at == created.created_at
+    assert updated.caught_at == new_caught_at
+
+    db_catch = session.get(CatchModel, created.catch_id)
+    assert db_catch is not None
+    assert as_utc(db_catch.created_at) == created.created_at
+    assert as_utc(db_catch.caught_at) == new_caught_at
 
 
 def test_update_catch_can_update_only_species(service, session):

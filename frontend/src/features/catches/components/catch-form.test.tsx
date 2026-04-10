@@ -127,11 +127,11 @@ describe("CatchForm", () => {
         onSubmit={vi.fn()}
         initialValues={{
           catch_id: "catch-1",
-          timestamp: "2026-04-09T10:00:00Z",
+          caught_at: "2026-04-09T10:00:00Z",
           lat: 51.987654,
           lon: 4.123456,
           species: "Pike",
-          technique: "Jerkbait",
+          technique_detail: "Jerkbait",
           notes: "Canal edge",
         }}
       />,
@@ -152,11 +152,11 @@ describe("CatchForm", () => {
         onSubmit={vi.fn()}
         initialValues={{
           catch_id: "catch-1",
-          timestamp: "2026-04-09T10:00:00Z",
+          caught_at: "2026-04-09T10:00:00Z",
           lat: 51.987654,
           lon: 4.123456,
           species: "Pike",
-          technique: "Jerkbait",
+          technique_detail: "Jerkbait",
           notes: "Canal edge",
         }}
       />,

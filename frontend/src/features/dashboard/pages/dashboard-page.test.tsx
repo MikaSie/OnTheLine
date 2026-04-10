@@ -45,20 +45,20 @@ vi.mock("recharts", () => ({
 const catches = [
   {
     catch_id: "1",
-    timestamp: "2026-04-09T10:00:00Z",
+    caught_at: "2026-04-09T10:00:00Z",
     lat: 52.0,
     lon: 4.0,
     species: "Sea Trout",
-    technique: "Spinning",
+    technique_detail: "Spinning",
     notes: "Rocks",
   },
   {
     catch_id: "2",
-    timestamp: "2026-04-08T10:00:00Z",
+    caught_at: "2026-04-08T10:00:00Z",
     lat: 52.1,
     lon: 4.1,
     species: "Sea Bass",
-    technique: "Fly",
+    technique_detail: "Fly",
     notes: "Harbor",
   },
 ];

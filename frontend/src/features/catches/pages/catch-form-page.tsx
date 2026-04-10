@@ -45,7 +45,7 @@ export function CatchFormPage({ mode }: CatchFormPageProps) {
       lat: values.lat,
       lon: values.lon,
       species: values.species?.trim() ?? "",
-      technique: values.technique?.trim() || null,
+      technique_detail: values.technique?.trim() || null,
       notes: values.notes?.trim() || null,
     };
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 from uuid import uuid4
 
@@ -6,6 +6,7 @@ import pytest
 
 from app.core.catch_entity import CatchEntity
 from app.main import create_app
+from app.services.catch_service import UNSET
 
 
 @pytest.fixture()
@@ -29,7 +30,7 @@ def test_home_returns_running_message(client):
 
 def test_create_catch_returns_201(client):
     fake_created_catch = CatchEntity.new(
-        created_at=datetime.now(),
+        created_at=datetime.now(timezone.utc),
         lat=52.0,
         lon=4.0,
         species="Seabass",
@@ -72,6 +73,54 @@ def test_create_catch_returns_201(client):
         lat=52.0,
         lon=4.0,
         species="Seabass",
+        caught_at=None,
+        technique_detail="Jig",
+        notes="Nice fish",
+    )
+    mock_db.close.assert_called_once()
+
+
+def test_create_catch_returns_201_through_given_caught_at(client):
+    provided_caught_at = datetime(2026, 4, 8, 8, 45, tzinfo=timezone.utc)
+    fake_created_catch = CatchEntity.new(
+        created_at=datetime.now(timezone.utc),
+        lat=52.0,
+        lon=4.0,
+        species="Seabass",
+        caught_at=provided_caught_at,
+        technique_detail="Jig",
+        notes="Nice fish",
+    )
+
+    mock_service_instance = MagicMock()
+    mock_service_instance.create_catch.return_value = fake_created_catch
+
+    mock_db = MagicMock()
+
+    with (
+        patch("app.api.routes.SessionLocal", return_value=mock_db),
+        patch("app.api.routes.CatchService", return_value=mock_service_instance),
+    ):
+        response = client.post(
+            "/catches",
+            json={
+                "lat": 52.0,
+                "lon": 4.0,
+                "species": "Seabass",
+                "caught_at": "2026-04-08T08:45:00Z",
+                "technique_detail": "Jig",
+                "notes": "Nice fish",
+            },
+            content_type="application/json",
+        )
+
+    assert response.status_code == 201
+
+    mock_service_instance.create_catch.assert_called_once_with(
+        lat=52.0,
+        lon=4.0,
+        species="Seabass",
+        caught_at=provided_caught_at,
         technique_detail="Jig",
         notes="Nice fish",
     )
@@ -261,7 +310,7 @@ def test_create_catch_returns_400_invalid_notes_type(client):
 
 def test_get_catches_returns_200(client):
     fake_created_catch_1 = CatchEntity.new(
-        created_at=datetime.now(),
+        created_at=datetime.now(timezone.utc),
         lat=52.0,
         lon=4.0,
         species="Seabass",
@@ -270,7 +319,7 @@ def test_get_catches_returns_200(client):
     )
 
     fake_created_catch_2 = CatchEntity.new(
-        created_at=datetime.now(),
+        created_at=datetime.now(timezone.utc),
         lat=62.0,
         lon=14.0,
         species="Sea trout",
@@ -341,7 +390,7 @@ def test_get_catches_returns_200_empty_list(client):
 
 def test_get_catch_returns_200(client):
     fake_created_catch = CatchEntity.new(
-        created_at=datetime.now(),
+        created_at=datetime.now(timezone.utc),
         lat=52.0,
         lon=4.0,
         species="Seabass",
@@ -497,6 +546,7 @@ def test_update_catch_returns_200(client):
         lat=52.0,
         lon=4.0,
         species="Pike",
+        caught_at=UNSET,
         technique_detail="Jig",
         notes="Updated catch",
     )
@@ -508,7 +558,7 @@ def test_update_catch_returns_200(client):
 def test_update_catch_returns_200_partial_update(client):
 
     updated_catch = CatchEntity.new(
-        created_at=datetime.now(),
+        created_at=datetime.now(timezone.utc),
         lat=52.0,
         lon=4.0,
         species="Pike",
@@ -548,9 +598,52 @@ def test_update_catch_returns_200_partial_update(client):
     mock_service_instance.update_catch.assert_called_once()
     called_kwargs = mock_service_instance.update_catch.call_args.kwargs
     assert called_kwargs["catch_id"] == updated_catch.catch_id
+    assert called_kwargs["caught_at"] == UNSET
     assert called_kwargs["technique_detail"] == "Spinnerbait"
     assert called_kwargs["notes"] == "Massive take"
 
+    mock_session.assert_called_once()
+    mock_service.assert_called_once_with(session=mock_db)
+    mock_db.close.assert_called_once()
+
+
+def test_update_catch_passes_through_given_caught_at(client):
+    updated_catch = CatchEntity.new(
+        lat=52.0,
+        lon=4.0,
+        species="Pike",
+        caught_at=datetime(2026, 4, 9, 6, 30, tzinfo=timezone.utc),
+        technique_detail="Jig",
+        notes="Updated catch",
+    )
+
+    mock_service_instance = MagicMock()
+    mock_service_instance.update_catch.return_value = updated_catch
+
+    mock_db = MagicMock()
+
+    with (
+        patch("app.api.routes.SessionLocal", return_value=mock_db) as mock_session,
+        patch(
+            "app.api.routes.CatchService", return_value=mock_service_instance
+        ) as mock_service,
+    ):
+        response = client.put(
+            f"/catches/{updated_catch.catch_id}",
+            json={"caught_at": "2026-04-09T06:30:00Z"},
+        )
+
+    assert response.status_code == 200
+
+    mock_service_instance.update_catch.assert_called_once_with(
+        catch_id=updated_catch.catch_id,
+        lat=UNSET,
+        lon=UNSET,
+        species=UNSET,
+        caught_at=datetime(2026, 4, 9, 6, 30, tzinfo=timezone.utc),
+        technique_detail=UNSET,
+        notes=UNSET,
+    )
     mock_session.assert_called_once()
     mock_service.assert_called_once_with(session=mock_db)
     mock_db.close.assert_called_once()
@@ -608,6 +701,7 @@ def test_update_catch_returns_404_not_found(client):
         lat=52.0,
         lon=4.0,
         species="Pike",
+        caught_at=UNSET,
         technique_detail="Jig",
         notes="Updated catch",
     )
@@ -649,6 +743,7 @@ def test_update_catch_returns_400_value_error(client):
         lat=52.0,
         lon=4.0,
         species="Pike",
+        caught_at=UNSET,
         technique_detail="Jig",
         notes="Updated catch",
     )
