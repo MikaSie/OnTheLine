@@ -20,7 +20,7 @@ class CatchService:
     def _to_entity(self, db_catch: CatchModel) -> CatchEntity:
         return CatchEntity(
             catch_id=db_catch.catch_id,
-            timestamp=db_catch.timestamp,
+            created_at=db_catch.created_at,
             lat=db_catch.lat,
             lon=db_catch.lon,
             species=db_catch.species,
@@ -48,7 +48,7 @@ class CatchService:
 
         db_catch = CatchModel(
             catch_id=new_catch.catch_id,
-            timestamp=new_catch.timestamp,
+            created_at=new_catch.created_at,
             lat=new_catch.lat,
             lon=new_catch.lon,
             species=new_catch.species,
@@ -103,7 +103,7 @@ class CatchService:
             species=species,
             technique=technique,
             notes=notes,
-            timestamp=old_catch.timestamp,
+            created_at=old_catch.created_at,
         )
 
         old_catch.lat = validated.lat

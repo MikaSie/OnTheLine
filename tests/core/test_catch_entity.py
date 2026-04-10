@@ -23,25 +23,25 @@ def test_create_catch_with_valid_input():
     assert isinstance(catch.catch_id, str)
 
 
-def test_create_catch_uses_given_timestamp():
+def test_create_catch_uses_given_created_at():
     fixed_time = datetime(2026, 4, 8, 10, 0, tzinfo=timezone.utc)
 
     catch = CatchEntity.new(
         lat=52.0,
         lon=4.0,
-        timestamp=fixed_time,
+        created_at=fixed_time,
     )
 
-    assert catch.timestamp == fixed_time
+    assert catch.created_at == fixed_time
 
 
-def test_create_timestamp_when_omitted():
+def test_create_created_at_when_omitted():
     catch = CatchEntity.new(
         lat=52.0,
         lon=4.0,
     )
 
-    assert isinstance(catch.timestamp, datetime)
+    assert isinstance(catch.created_at, datetime)
 
 
 def test_convert_lat_lon_to_float():

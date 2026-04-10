@@ -20,7 +20,7 @@ class CatchRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     catch_id: str
-    timestamp: datetime
+    created_at: datetime
     lat: float
     lon: float
     species: str

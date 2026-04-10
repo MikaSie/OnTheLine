@@ -29,7 +29,7 @@ def test_home_returns_running_message(client):
 
 def test_create_catch_returns_201(client):
     fake_created_catch = CatchEntity.new(
-        timestamp=datetime.now(),
+        created_at=datetime.now(),
         lat=52.0,
         lon=4.0,
         species="Seabass",
@@ -261,7 +261,7 @@ def test_create_catch_returns_400_invalid_notes_type(client):
 
 def test_get_catches_returns_200(client):
     fake_created_catch_1 = CatchEntity.new(
-        timestamp=datetime.now(),
+        created_at=datetime.now(),
         lat=52.0,
         lon=4.0,
         species="Seabass",
@@ -270,7 +270,7 @@ def test_get_catches_returns_200(client):
     )
 
     fake_created_catch_2 = CatchEntity.new(
-        timestamp=datetime.now(),
+        created_at=datetime.now(),
         lat=62.0,
         lon=14.0,
         species="Sea trout",
@@ -341,7 +341,7 @@ def test_get_catches_returns_200_empty_list(client):
 
 def test_get_catch_returns_200(client):
     fake_created_catch = CatchEntity.new(
-        timestamp=datetime.now(),
+        created_at=datetime.now(),
         lat=52.0,
         lon=4.0,
         species="Seabass",
@@ -508,7 +508,7 @@ def test_update_catch_returns_200(client):
 def test_update_catch_returns_200_partial_update(client):
 
     updated_catch = CatchEntity.new(
-        timestamp=datetime.now(),
+        created_at=datetime.now(),
         lat=52.0,
         lon=4.0,
         species="Pike",

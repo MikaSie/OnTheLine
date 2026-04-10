@@ -9,7 +9,7 @@ from uuid import uuid4
 @dataclass(frozen=True)
 class CatchEntity:
     catch_id: str
-    timestamp: datetime
+    created_at: datetime
     lat: float
     lon: float
     species: str
@@ -24,7 +24,7 @@ class CatchEntity:
         species: str = "",
         technique: Optional[str] = None,
         notes: Optional[str] = None,
-        timestamp: Optional[datetime] = None,
+        created_at: Optional[datetime] = None,
     ) -> "CatchEntity":
         # --- Type + basic validation ---
         lat = float(lat)
@@ -48,11 +48,11 @@ class CatchEntity:
 
         species = species.strip()
 
-        ts = timestamp or datetime.now(timezone.utc)
+        created_at = created_at or datetime.now(timezone.utc)
 
         return CatchEntity(
             catch_id=str(uuid4()),
-            timestamp=ts,
+            created_at=created_at,
             lat=lat,
             lon=lon,
             species=species,
