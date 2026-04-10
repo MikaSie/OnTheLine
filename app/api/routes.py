@@ -31,6 +31,7 @@ def create_catch():
             lon=float(data["lon"]),
             species=data.get("species", ""),
             caught_at=data.get("caught_at"),
+            length_cm=data.get("length_cm"),
             technique_detail=data.get("technique_detail"),
             notes=data.get("notes"),
         )
@@ -40,6 +41,7 @@ def create_catch():
             lon=catch_input.lon,
             species=catch_input.species,
             caught_at=catch_input.caught_at,
+            length_cm=catch_input.length_cm,
             technique_detail=catch_input.technique_detail,
             notes=catch_input.notes,
         )
@@ -120,6 +122,7 @@ def update_catch(catch_id: str):
             lon=update_input.lon if "lon" in data else UNSET,
             species=update_input.species if "species" in data else UNSET,
             caught_at=update_input.caught_at if "caught_at" in data else UNSET,
+            length_cm=update_input.length_cm if "length_cm" in data else UNSET,
             technique_detail=update_input.technique_detail
             if "technique_detail" in data
             else UNSET,

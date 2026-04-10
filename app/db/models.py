@@ -20,7 +20,7 @@ class CatchModel(Base):
 
     species: Mapped[str] = mapped_column(String)
     caught_at: Mapped[datetime] = mapped_column(DateTime)
-    # length_cm
+    length_cm: Mapped[float | None] = mapped_column(Float, nullable=True)
     # method_category
     technique_detail: Mapped[str | None] = mapped_column(String, nullable=True)
     # depth

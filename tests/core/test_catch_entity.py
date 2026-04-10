@@ -10,6 +10,7 @@ def test_create_catch_with_valid_input():
         lat=52.0,
         lon=4.0,
         species="Sea Trout",
+        length_cm=63,
         technique_detail="Spinning",
         notes="Caught near rocks",
     )
@@ -18,6 +19,7 @@ def test_create_catch_with_valid_input():
     assert catch.lat == 52.0
     assert catch.lon == 4.0
     assert catch.species == "Sea Trout"
+    assert catch.length_cm == 63.0
     assert catch.technique_detail == "Spinning"
     assert catch.notes == "Caught near rocks"
     assert isinstance(catch.catch_id, str)
@@ -164,6 +166,44 @@ def test_technique_detail_can_be_none():
     )
 
     assert catch.technique_detail is None
+
+
+def test_length_cm_is_converted_to_float():
+    catch = CatchEntity.new(
+        lat=52.0,
+        lon=4.0,
+        length_cm=63,
+    )
+
+    assert catch.length_cm == 63.0
+
+
+def test_length_cm_can_be_none():
+    catch = CatchEntity.new(
+        lat=52.0,
+        lon=4.0,
+        length_cm=None,
+    )
+
+    assert catch.length_cm is None
+
+
+def test_length_cm_must_be_number_or_none():
+    with pytest.raises(ValueError, match="length_cm must be a number or None"):
+        CatchEntity.new(
+            lat=52.0,
+            lon=4.0,
+            length_cm="big one",
+        )
+
+
+def test_length_cm_must_be_greater_than_zero():
+    with pytest.raises(ValueError, match="length_cm must be greater than 0"):
+        CatchEntity.new(
+            lat=52.0,
+            lon=4.0,
+            length_cm=0,
+        )
 
 
 def test_notes_must_be_string_or_none():
