@@ -23,6 +23,6 @@ class CatchModel(Base):
     length_cm: Mapped[float | None] = mapped_column(Float, nullable=True)
     method_category: Mapped[str] = mapped_column(String, nullable=True)
     technique_detail: Mapped[str | None] = mapped_column(String, nullable=True)
-    # depth
+    depth_m: Mapped[float | None] = mapped_column(Float, nullable=True)
     notes: Mapped[str | None] = mapped_column(String, nullable=True)
     # catch and release

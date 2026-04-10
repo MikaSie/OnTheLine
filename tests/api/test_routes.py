@@ -53,6 +53,7 @@ def test_create_catch_returns_201(client):
         length_cm=63,
         method_category="Spinning",
         technique_detail="Jig",
+        depth_m=2.5,
         notes="Nice fish",
     )
 
@@ -74,6 +75,7 @@ def test_create_catch_returns_201(client):
                 "length_cm": 63.0,
                 "method_category": "Spinning",
                 "technique_detail": "Jig",
+                "depth_m": 2.5,
                 "notes": "Nice fish",
             },
             content_type="application/json",
@@ -88,6 +90,7 @@ def test_create_catch_returns_201(client):
     assert data["species"] == "Sea Bass"
     assert data["length_cm"] == 63.0
     assert data["technique_detail"] == "Jig"
+    assert data["depth_m"] == 2.5
     assert data["notes"] == "Nice fish"
 
     mock_service_instance.create_catch.assert_called_once_with(
@@ -98,6 +101,7 @@ def test_create_catch_returns_201(client):
         length_cm=63.0,
         method_category="Spinning",
         technique_detail="Jig",
+        depth_m=2.5,
         notes="Nice fish",
     )
     mock_db.close.assert_called_once()
@@ -198,7 +202,55 @@ def test_create_catch_returns_201_through_given_length_cm(client):
         length_cm=71.5,
         method_category=None,
         technique_detail="Jig",
+        depth_m=None,
         notes="Nice fish",
+    )
+    mock_db.close.assert_called_once()
+
+
+def test_create_catch_returns_201_through_given_depth_m(client):
+    fake_created_catch = CatchEntity.new(
+        created_at=datetime.now(timezone.utc),
+        lat=52.0,
+        lon=4.0,
+        species="Sea Bass",
+        depth_m=3.5,
+        method_category="Spinning",
+    )
+
+    mock_service_instance = MagicMock()
+    mock_service_instance.create_catch.return_value = fake_created_catch
+
+    mock_db = MagicMock()
+
+    with (
+        patch("app.api.routes.SessionLocal", return_value=mock_db),
+        patch("app.api.routes.CatchService", return_value=mock_service_instance),
+    ):
+        response = client.post(
+            "/catches",
+            json={
+                "lat": 52.0,
+                "lon": 4.0,
+                "species": "Sea Bass",
+                "method_category": "Spinning",
+                "depth_m": 3.5,
+            },
+            content_type="application/json",
+        )
+
+    assert response.status_code == 201
+
+    mock_service_instance.create_catch.assert_called_once_with(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Bass",
+        caught_at=None,
+        length_cm=None,
+        method_category="Spinning",
+        technique_detail=None,
+        depth_m=3.5,
+        notes=None,
     )
     mock_db.close.assert_called_once()
 
@@ -242,6 +294,7 @@ def test_create_catch_returns_201_through_given_method_category(client):
         length_cm=None,
         method_category="Spinning",
         technique_detail=None,
+        depth_m=None,
         notes=None,
     )
     mock_db.close.assert_called_once()
@@ -471,6 +524,34 @@ def test_create_catch_returns_400_invalid_length_cm_type(client):
     mock_db.close.assert_called_once()
 
 
+def test_create_catch_returns_400_invalid_depth_m_type(client):
+    mock_db = MagicMock()
+    mock_service_instance = MagicMock()
+
+    with (
+        patch("app.api.routes.SessionLocal", return_value=mock_db) as mock_session,
+        patch("app.api.routes.CatchService", return_value=mock_service_instance) as mock_service,
+    ):
+        response = client.post(
+            "/catches",
+            json={
+                "lat": 52.0,
+                "lon": 4.0,
+                "species": "Sea Bass",
+                "depth_m": "deep",
+                "notes": "Nice fish",
+            },
+        )
+
+    assert response.status_code == 400
+    assert response.get_json() == {"error": "Invalid catch data"}
+
+    mock_session.assert_called_once()
+    mock_service.assert_called_once_with(session=mock_db)
+    mock_service_instance.create_catch.assert_not_called()
+    mock_db.close.assert_called_once()
+
+
 def test_create_catch_returns_400_invalid_method_category_type(client):
     mock_db = MagicMock()
     mock_service_instance = MagicMock()
@@ -687,6 +768,7 @@ def test_update_catch_returns_200(client):
         length_cm=83,
         method_category="Spinning",
         technique_detail="Jig",
+        depth_m=1.5,
         notes="Updated catch",
     )
 
@@ -719,6 +801,7 @@ def test_update_catch_returns_200(client):
     assert data["species"] == updated_catch.species
     assert data["length_cm"] == updated_catch.length_cm
     assert data["technique_detail"] == updated_catch.technique_detail
+    assert data["depth_m"] == updated_catch.depth_m
     assert data["notes"] == updated_catch.notes
 
     mock_service_instance.update_catch.assert_called_once_with(
@@ -730,6 +813,7 @@ def test_update_catch_returns_200(client):
         length_cm=UNSET,
         method_category=UNSET,
         technique_detail="Jig",
+        depth_m=UNSET,
         notes="Updated catch",
     )
     mock_session.assert_called_once()
@@ -780,6 +864,7 @@ def test_update_catch_returns_200_partial_update(client):
     assert called_kwargs["catch_id"] == updated_catch.catch_id
     assert called_kwargs["caught_at"] == UNSET
     assert called_kwargs["technique_detail"] == "Spinnerbait"
+    assert called_kwargs["depth_m"] == UNSET
     assert called_kwargs["notes"] == "Massive take"
 
     mock_session.assert_called_once()
@@ -822,6 +907,7 @@ def test_update_catch_passes_through_given_length_cm(client):
         length_cm=68.5,
         method_category=UNSET,
         technique_detail=UNSET,
+        depth_m=UNSET,
         notes=UNSET,
     )
     mock_session.assert_called_once()
@@ -865,6 +951,7 @@ def test_update_catch_passes_through_given_caught_at(client):
     assert called_kwargs["length_cm"] is UNSET
     assert called_kwargs["method_category"] is UNSET
     assert called_kwargs["technique_detail"] is UNSET
+    assert called_kwargs["depth_m"] is UNSET
     assert called_kwargs["notes"] is UNSET
     mock_session.assert_called_once()
     mock_service.assert_called_once_with(session=mock_db)
@@ -904,6 +991,48 @@ def test_update_catch_passes_through_given_method_category(client):
         length_cm=UNSET,
         method_category="Vertical Fishing",
         technique_detail=UNSET,
+        depth_m=UNSET,
+        notes=UNSET,
+    )
+    mock_session.assert_called_once()
+    mock_service.assert_called_once_with(session=mock_db)
+    mock_db.close.assert_called_once()
+
+
+def test_update_catch_passes_through_given_depth_m(client):
+    updated_catch = CatchEntity.new(
+        lat=52.0,
+        lon=4.0,
+        species="Pike",
+        depth_m=4.0,
+    )
+
+    mock_service_instance = MagicMock()
+    mock_service_instance.update_catch.return_value = updated_catch
+
+    mock_db = MagicMock()
+
+    with (
+        patch("app.api.routes.SessionLocal", return_value=mock_db) as mock_session,
+        patch("app.api.routes.CatchService", return_value=mock_service_instance) as mock_service,
+    ):
+        response = client.put(
+            f"/catches/{updated_catch.catch_id}",
+            json={"depth_m": 4.0},
+        )
+
+    assert response.status_code == 200
+
+    mock_service_instance.update_catch.assert_called_once_with(
+        catch_id=updated_catch.catch_id,
+        lat=UNSET,
+        lon=UNSET,
+        species=UNSET,
+        caught_at=UNSET,
+        length_cm=UNSET,
+        method_category=UNSET,
+        technique_detail=UNSET,
+        depth_m=4.0,
         notes=UNSET,
     )
     mock_session.assert_called_once()
@@ -965,6 +1094,7 @@ def test_update_catch_returns_404_not_found(client):
         length_cm=UNSET,
         method_category=UNSET,
         technique_detail="Jig",
+        depth_m=UNSET,
         notes="Updated catch",
     )
     mock_session.assert_called_once()
@@ -1007,6 +1137,7 @@ def test_update_catch_returns_400_value_error(client):
         length_cm=UNSET,
         method_category=UNSET,
         technique_detail="Jig",
+        depth_m=UNSET,
         notes="Updated catch",
     )
     mock_session.assert_called_once()

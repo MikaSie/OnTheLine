@@ -123,6 +123,21 @@ def test_create_catch_stores_method_category(service, session):
     assert db_catch.method_category == "Spinning"
 
 
+def test_create_catch_stores_depth_m(service, session):
+    catch = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        depth_m=3.5,
+    )
+
+    assert catch.depth_m == 3.5
+
+    db_catch = session.get(CatchModel, catch.catch_id)
+    assert db_catch is not None
+    assert db_catch.depth_m == catch.depth_m
+
+
 def test_create_catch_propagates_entity_validation_errors(service):
     with pytest.raises(ValueError, match="Latitude must be between -90 and 90"):
         service.create_catch(
@@ -319,6 +334,37 @@ def test_update_catch_can_update_method_category(service, session):
     db_catch = session.get(CatchModel, created.catch_id)
     assert db_catch is not None
     assert db_catch.method_category == "Vertical Fishing"
+
+
+def test_update_catch_can_update_depth_m(service, session):
+    created = service.create_catch(
+        lat=52.0,
+        lon=4.0,
+        species="Sea Trout",
+        depth_m=2.0,
+    )
+
+    updated = service.update_catch(
+        catch_id=created.catch_id,
+        depth_m=4.5,
+    )
+
+    assert updated is not None
+    assert updated.depth_m == 4.5
+
+    db_catch = session.get(CatchModel, created.catch_id)
+    assert db_catch is not None
+    assert db_catch.depth_m == 4.5
+
+
+def test_create_catch_rejects_negative_depth_m(service):
+    with pytest.raises(ValueError, match="depth_m must be 0 or greater"):
+        service.create_catch(
+            lat=52.0,
+            lon=4.0,
+            species="Perch",
+            depth_m=-1,
+        )
 
 
 def test_update_catch_returns_none_when_missing(service):

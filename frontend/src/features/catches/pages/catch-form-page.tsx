@@ -54,6 +54,7 @@ export function CatchFormPage({ mode }: CatchFormPageProps) {
       lon: values.lon,
       species: values.species.trim(),
       method_category: values.methodCategory.trim(),
+      depth_m: values.depthM ?? null,
       technique_detail: values.technique?.trim() || null,
       notes: values.notes?.trim() || null,
     };

@@ -37,6 +37,7 @@ export function CatchForm({
       lon: initialValues?.lon,
       species: initialValues?.species ?? "",
       methodCategory: initialValues?.method_category ?? "",
+      depthM: initialValues?.depth_m ?? undefined,
       technique: initialValues?.technique_detail ?? "",
       notes: initialValues?.notes ?? "",
     },
@@ -61,6 +62,7 @@ export function CatchForm({
       lon: initialValues?.lon,
       species: initialValues?.species ?? "",
       methodCategory: initialValues?.method_category ?? "",
+      depthM: initialValues?.depth_m ?? undefined,
       technique: initialValues?.technique_detail ?? "",
       notes: initialValues?.notes ?? "",
     });
@@ -146,7 +148,22 @@ export function CatchForm({
               </div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-1">
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="depthM" className="text-base font-semibold">
+                  Depth (m)
+                </Label>
+                <Input
+                  id="depthM"
+                  inputMode="decimal"
+                  className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
+                  placeholder="Optional depth in meters"
+                  {...register("depthM")}
+                />
+                {errors.depthM ? (
+                  <p className="text-sm text-destructive">{errors.depthM.message}</p>
+                ) : null}
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="technique" className="text-base font-semibold">
                   Technique

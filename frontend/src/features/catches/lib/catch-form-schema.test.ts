@@ -9,6 +9,7 @@ describe("catchFormSchema", () => {
       lon: 4.9,
       species: "Sea trout",
       methodCategory: "Spinning",
+      depthM: 2.5,
       technique: "Spinning",
       notes: "Wind pushing bait into the bank",
     });
@@ -87,6 +88,40 @@ describe("catchFormSchema", () => {
     if (!result.success) {
       expect(result.error.flatten().fieldErrors.methodCategory).toContain(
         "Method category is required",
+      );
+    }
+  });
+
+  it("accepts a valid depth in meters", () => {
+    const result = catchFormSchema.safeParse({
+      lat: 52.37,
+      lon: 4.9,
+      species: "Sea Trout",
+      methodCategory: "Spinning",
+      depthM: "3,5",
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.depthM).toBeCloseTo(3.5);
+    }
+  });
+
+  it("rejects negative depth", () => {
+    const result = catchFormSchema.safeParse({
+      lat: 52.37,
+      lon: 4.9,
+      species: "Sea Trout",
+      methodCategory: "Spinning",
+      depthM: -1,
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.flatten().fieldErrors.depthM).toContain(
+        "Depth must be 0 or greater",
       );
     }
   });

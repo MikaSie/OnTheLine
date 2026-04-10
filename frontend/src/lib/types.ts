@@ -8,6 +8,7 @@ export interface Catch {
   length_cm?: number | null;
   method_category?: string | null;
   technique_detail: string | null;
+  depth_m?: number | null;
   notes: string | null;
 }
 
@@ -19,6 +20,7 @@ export interface CreateCatchInput {
   length_cm?: number | null;
   method_category?: string | null;
   technique_detail?: string | null;
+  depth_m?: number | null;
   notes?: string | null;
 }
 
@@ -30,6 +32,7 @@ export interface UpdateCatchInput {
   length_cm?: number | null;
   method_category?: string | null;
   technique_detail?: string | null;
+  depth_m?: number | null;
   notes?: string | null;
 }
 

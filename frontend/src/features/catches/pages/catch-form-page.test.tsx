@@ -63,6 +63,7 @@ vi.mock("../components/catch-form", () => ({
       lon: number;
       species?: string;
       methodCategory?: string;
+      depthM?: number;
       technique?: string;
       notes?: string;
     }) => void;
@@ -80,6 +81,7 @@ vi.mock("../components/catch-form", () => ({
           lon: 4.9041,
           species: "  Sea Trout  ",
           methodCategory: "  Spinning  ",
+          depthM: 3.5,
           technique: "  Spinning  ",
           notes: "  Near the rocks  ",
         })
@@ -131,6 +133,7 @@ describe("CatchFormPage", () => {
       lon: 4.9041,
       species: "Sea Trout",
       method_category: "Spinning",
+      depth_m: 3.5,
       technique_detail: "Spinning",
       notes: "Near the rocks",
     });
@@ -152,6 +155,7 @@ describe("CatchFormPage", () => {
         lon: 4.1,
         species: "Sea Bass",
         method_category: "Spinning",
+        depth_m: 2.0,
         technique_detail: "Fly",
         notes: "Initial",
       },
@@ -175,6 +179,7 @@ describe("CatchFormPage", () => {
         lon: 4.9041,
         species: "Sea Trout",
         method_category: "Spinning",
+        depth_m: 3.5,
         technique_detail: "Spinning",
         notes: "Near the rocks",
       },

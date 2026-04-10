@@ -16,6 +16,7 @@ class CatchCreate(BaseModel):
     length_cm: float | None = None
     method_category: str | None = None
     technique_detail: str | None = None
+    depth_m: float | None = None
     notes: str | None = None
 
 
@@ -27,6 +28,7 @@ class CatchUpdate(BaseModel):
     length_cm: float | None = None
     method_category: str | None = None
     technique_detail: str | None = None
+    depth_m: float | None = None
     notes: str | None = None
 
 
@@ -42,4 +44,5 @@ class CatchRead(BaseModel):
     length_cm: float | None = None
     method_category: str | None = None
     technique_detail: str | None = None
+    depth_m: float | None = None
     notes: str | None = None

@@ -49,6 +49,7 @@ def create_catch():
             length_cm=data.get("length_cm"),
             method_category=data.get("method_category"),
             technique_detail=data.get("technique_detail"),
+            depth_m=data.get("depth_m"),
             notes=data.get("notes"),
         )
 
@@ -60,6 +61,7 @@ def create_catch():
             length_cm=catch_input.length_cm,
             method_category=catch_input.method_category,
             technique_detail=catch_input.technique_detail,
+            depth_m=catch_input.depth_m,
             notes=catch_input.notes,
         )
 
@@ -142,6 +144,7 @@ def update_catch(catch_id: str):
             length_cm=update_input.length_cm if "length_cm" in data else UNSET,
             method_category=update_input.method_category if "method_category" in data else UNSET,
             technique_detail=update_input.technique_detail if "technique_detail" in data else UNSET,
+            depth_m=update_input.depth_m if "depth_m" in data else UNSET,
             notes=update_input.notes if "notes" in data else UNSET,
         )
 

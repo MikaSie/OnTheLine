@@ -266,6 +266,48 @@ def test_method_category_must_be_in_supported_list():
         )
 
 
+def test_depth_m_is_converted_to_float():
+    catch = CatchEntity.new(
+        lat=52.0,
+        lon=4.0,
+        species="Perch",
+        depth_m=4,
+    )
+
+    assert catch.depth_m == 4.0
+
+
+def test_depth_m_can_be_none():
+    catch = CatchEntity.new(
+        lat=52.0,
+        lon=4.0,
+        species="Perch",
+        depth_m=None,
+    )
+
+    assert catch.depth_m is None
+
+
+def test_depth_m_must_be_number_or_none():
+    with pytest.raises(ValueError, match="depth_m must be a number or None"):
+        CatchEntity.new(
+            lat=52.0,
+            lon=4.0,
+            species="Perch",
+            depth_m="deep",
+        )
+
+
+def test_depth_m_must_be_zero_or_greater():
+    with pytest.raises(ValueError, match="depth_m must be 0 or greater"):
+        CatchEntity.new(
+            lat=52.0,
+            lon=4.0,
+            species="Perch",
+            depth_m=-1,
+        )
+
+
 def test_notes_must_be_string_or_none():
     with pytest.raises(ValueError, match="Notes must be a string or None"):
         CatchEntity.new(

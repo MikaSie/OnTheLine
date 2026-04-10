@@ -17,6 +17,7 @@ class CatchEntity:
     length_cm: float | None
     method_category: str | None
     technique_detail: str | None
+    depth_m: float | None
     notes: str | None
 
     @staticmethod
@@ -30,6 +31,7 @@ class CatchEntity:
         length_cm: Optional[float] = None,
         method_category: Optional[str] = None,
         technique_detail: Optional[str] = None,
+        depth_m: Optional[float] = None,
         notes: Optional[str] = None,
     ) -> "CatchEntity":
         # --- Type + basic validation ---
@@ -52,6 +54,12 @@ class CatchEntity:
             except (TypeError, ValueError) as exc:
                 raise ValueError("length_cm must be a number or None") from exc
 
+        if depth_m is not None:
+            try:
+                depth_m = float(depth_m)
+            except (TypeError, ValueError) as exc:
+                raise ValueError("depth_m must be a number or None") from exc
+
         if method_category is not None and not isinstance(method_category, str):
             raise ValueError("method_category must be a string or None")
 
@@ -63,6 +71,9 @@ class CatchEntity:
 
         if length_cm is not None and length_cm <= 0:
             raise ValueError("length_cm must be greater than 0")
+
+        if depth_m is not None and depth_m < 0:
+            raise ValueError("depth_m must be 0 or greater")
 
         if not species:
             raise ValueError("Species is required")
@@ -88,5 +99,6 @@ class CatchEntity:
             length_cm=length_cm,
             method_category=method_category,
             technique_detail=technique_detail,
+            depth_m=depth_m,
             notes=notes,
         )

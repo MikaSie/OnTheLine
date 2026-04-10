@@ -60,6 +60,7 @@ describe("CatchForm", () => {
     await user.click(screen.getByRole("option", { name: "Sea Trout" }));
     await user.click(screen.getByRole("combobox", { name: "Method Category" }));
     await user.click(screen.getByRole("option", { name: "Spinning" }));
+    await user.type(screen.getByLabelText("Depth (m)"), "3,5");
     await user.click(screen.getByRole("button", { name: "Log catch" }));
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
@@ -72,6 +73,7 @@ describe("CatchForm", () => {
         lon: 4.9041,
         species: "Sea Trout",
         methodCategory: "Spinning",
+        depthM: 3.5,
       }),
     );
   });
@@ -101,6 +103,7 @@ describe("CatchForm", () => {
     await user.click(screen.getByRole("option", { name: "Sea Bass" }));
     await user.click(screen.getByRole("combobox", { name: "Method Category" }));
     await user.click(screen.getByRole("option", { name: "Fly Fishing" }));
+    await user.type(screen.getByLabelText("Depth (m)"), "1.2");
     await user.click(screen.getByRole("button", { name: "Log catch" }));
 
     expect(onSubmit).toHaveBeenCalledWith(
@@ -109,6 +112,7 @@ describe("CatchForm", () => {
         lon: 6.654321,
         species: "Sea Bass",
         methodCategory: "Fly Fishing",
+        depthM: 1.2,
       }),
       expect.anything(),
     );
@@ -148,6 +152,7 @@ describe("CatchForm", () => {
           lon: 4.123456,
           species: "Pike",
           method_category: "Spinning",
+          depth_m: 2.0,
           technique_detail: "Jerkbait",
           notes: "Canal edge",
         }}
@@ -176,6 +181,7 @@ describe("CatchForm", () => {
           lon: 4.123456,
           species: "Pike",
           method_category: "Spinning",
+          depth_m: 2.0,
           technique_detail: "Jerkbait",
           notes: "Canal edge",
         }}
