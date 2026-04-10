@@ -25,4 +25,3 @@ class CatchModel(Base):
     technique_detail: Mapped[str | None] = mapped_column(String, nullable=True)
     depth_m: Mapped[float | None] = mapped_column(Float, nullable=True)
     notes: Mapped[str | None] = mapped_column(String, nullable=True)
-    # catch and release
