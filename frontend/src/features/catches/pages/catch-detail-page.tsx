@@ -7,7 +7,12 @@ import { Button } from "../../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Skeleton } from "../../../components/ui/skeleton";
 import { useToast } from "../../../components/ui/toaster";
-import { formatCoordinate, formatDateTime } from "../../../lib/formatters";
+import {
+  formatCoordinate,
+  formatDateTime,
+  formatDepthMeters,
+  formatLengthCm,
+} from "../../../lib/formatters";
 import { CatchMap } from "../../maps/components/catch-map";
 import { useCatch, useDeleteCatch } from "../hooks/use-catches";
 import { ConfirmDialog } from "../components/confirm-dialog";
@@ -83,44 +88,6 @@ export function CatchDetailPage() {
       <div className="space-y-6">
         <Card className="overflow-hidden">
           <CardHeader>
-            <CardTitle>Record overview</CardTitle>
-            <CardDescription>
-              High-confidence metadata for this catch log entry.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <StatBadge label="Species" value={catchEntry.species || "Unspecified"} />
-              <StatBadge
-                label="Technique"
-                value={catchEntry.technique_detail || "Unspecified"}
-              />
-              <StatBadge
-                label="Latitude"
-                value={formatCoordinate(catchEntry.lat, "lat")}
-              />
-              <StatBadge
-                label="Longitude"
-                value={formatCoordinate(catchEntry.lon, "lon")}
-              />
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
-              <p className="text-kicker">Caught at</p>
-              <p className="mt-3 font-display text-2xl font-semibold">
-                {formatDateTime(catchEntry.caught_at)}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
-              <p className="text-kicker">Notes</p>
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-foreground/80">
-                {catchEntry.notes || "No notes were recorded for this catch."}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="overflow-hidden">
-          <CardHeader>
             <CardTitle>Catch map</CardTitle>
             <CardDescription>
               Review the exact logged position directly alongside the rest of the record.
@@ -132,6 +99,54 @@ export function CatchDetailPage() {
               className="h-[360px]"
               selectedPoint={{ lat: catchEntry.lat, lon: catchEntry.lon }}
             />
+          </CardContent>
+        </Card>
+
+        <Card className="overflow-hidden">
+          <CardHeader>
+            <CardTitle>Record overview</CardTitle>
+            <CardDescription>
+              High-confidence metadata for this catch log entry.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2">
+              <StatBadge
+                label="Latitude"
+                value={formatCoordinate(catchEntry.lat, "lat")}
+              />
+              <StatBadge
+                label="Longitude"
+                value={formatCoordinate(catchEntry.lon, "lon")}
+              />
+              <StatBadge
+                label="Caught at"
+                value={formatDateTime(catchEntry.caught_at)}
+              />
+              <StatBadge label="Species" value={catchEntry.species || "Unspecified"} />
+              <StatBadge
+                label="Length"
+                value={formatLengthCm(catchEntry.length_cm, "-")}
+              />
+              <StatBadge
+                label="Method"
+                value={catchEntry.method_category || "-"}
+              />
+              <StatBadge
+                label="Depth"
+                value={formatDepthMeters(catchEntry.depth_m, "-")}
+              />
+              <StatBadge
+                label="Technique"
+                value={catchEntry.technique_detail || "-"}
+              />
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+              <p className="text-kicker">Notes</p>
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-foreground/80">
+                {catchEntry.notes || "No notes were recorded for this catch."}
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -7,7 +7,9 @@ describe("catchFormSchema", () => {
     const result = catchFormSchema.safeParse({
       lat: 52.37,
       lon: 4.9,
+      caughtAt: "2026-04-09T06:30",
       species: "Sea trout",
+      lengthCm: 61.5,
       methodCategory: "Spinning",
       depthM: 2.5,
       technique: "Spinning",
@@ -80,16 +82,9 @@ describe("catchFormSchema", () => {
       lat: 52.37,
       lon: 4.9,
       species: "Sea Trout",
-      methodCategory: "",
     });
 
-    expect(result.success).toBe(false);
-
-    if (!result.success) {
-      expect(result.error.flatten().fieldErrors.methodCategory).toContain(
-        "Method category is required",
-      );
-    }
+    expect(result.success).toBe(true);
   });
 
   it("accepts a valid depth in meters", () => {
@@ -105,6 +100,40 @@ describe("catchFormSchema", () => {
 
     if (result.success) {
       expect(result.data.depthM).toBeCloseTo(3.5);
+    }
+  });
+
+  it("accepts a valid length in centimeters", () => {
+    const result = catchFormSchema.safeParse({
+      lat: 52.37,
+      lon: 4.9,
+      species: "Sea Trout",
+      methodCategory: "Spinning",
+      lengthCm: "61,5",
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.lengthCm).toBeCloseTo(61.5);
+    }
+  });
+
+  it("rejects non-positive length", () => {
+    const result = catchFormSchema.safeParse({
+      lat: 52.37,
+      lon: 4.9,
+      species: "Sea Trout",
+      methodCategory: "Spinning",
+      lengthCm: 0,
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.flatten().fieldErrors.lengthCm).toContain(
+        "Length must be greater than 0",
+      );
     }
   });
 

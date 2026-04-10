@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { CalendarDays, MapPinned, Ruler, Waves } from "lucide-react";
 
 import { Button } from "../../../components/ui/button";
 import {
@@ -9,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../components/ui/table";
-import { formatCoordinate, formatDateTime } from "../../../lib/formatters";
+import { formatCoordinate, formatDateTime, formatLengthCm } from "../../../lib/formatters";
 import type { Catch } from "../../../lib/types";
 
 export function CatchTable({ catches }: { catches: Catch[] }) {
@@ -18,9 +19,10 @@ export function CatchTable({ catches }: { catches: Catch[] }) {
       <TableHeader>
         <TableRow>
           <TableHead>Species</TableHead>
-          <TableHead>Technique</TableHead>
-          <TableHead>Coordinates</TableHead>
+          <TableHead>Location</TableHead>
           <TableHead>Logged</TableHead>
+          <TableHead>Technique</TableHead>
+          <TableHead>Length</TableHead>
           <TableHead className="text-right">Open</TableHead>
         </TableRow>
       </TableHeader>
@@ -30,12 +32,33 @@ export function CatchTable({ catches }: { catches: Catch[] }) {
             <TableCell className="font-medium text-foreground">
               {entry.species || "Unspecified"}
             </TableCell>
-            <TableCell>{entry.technique_detail || "Unspecified"}</TableCell>
             <TableCell>
-              {formatCoordinate(entry.lat, "lat")} /{" "}
-              {formatCoordinate(entry.lon, "lon")}
+              <div className="flex items-center gap-2">
+                <MapPinned className="h-4 w-4 text-primary" />
+                <span>
+                  {formatCoordinate(entry.lat, "lat")} /{" "}
+                  {formatCoordinate(entry.lon, "lon")}
+                </span>
+              </div>
             </TableCell>
-            <TableCell>{formatDateTime(entry.caught_at)}</TableCell>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                <CalendarDays className="h-4 w-4 text-primary" />
+                <span>{formatDateTime(entry.caught_at)}</span>
+              </div>
+            </TableCell>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                <Waves className="h-4 w-4 text-primary" />
+                <span>{entry.technique_detail || "-"}</span>
+              </div>
+            </TableCell>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                <Ruler className="h-4 w-4 text-primary" />
+                <span>{formatLengthCm(entry.length_cm, "-")}</span>
+              </div>
+            </TableCell>
             <TableCell className="text-right">
               <Button asChild variant="ghost" size="sm">
                 <Link to={`/catches/${entry.catch_id}`}>View</Link>

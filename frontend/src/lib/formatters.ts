@@ -55,3 +55,19 @@ export function formatTemperature(value: number) {
 export function formatPressure(value: number) {
   return `${Math.round(value)} hPa`;
 }
+
+export function formatLengthCm(value?: number | null, emptyLabel = "Not specified") {
+  if (value === null || value === undefined) {
+    return emptyLabel;
+  }
+
+  return `${value.toFixed(1)} cm`;
+}
+
+export function formatDepthMeters(value?: number | null, emptyLabel = "Not specified") {
+  if (value === null || value === undefined) {
+    return emptyLabel;
+  }
+
+  return `${value.toFixed(1)} m`;
+}

@@ -13,6 +13,36 @@ import { toMapPoint } from "../../maps/lib/map-utils";
 import { catchFormSchema, type CatchFormValues } from "../lib/catch-form-schema";
 import { LocationFieldGroup } from "./location-field-group";
 
+const EMPTY_METHOD_CATEGORY = "__none__";
+
+function toDateTimeLocalValue(value?: string) {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const offsetMinutes = date.getTimezoneOffset();
+  const localDate = new Date(date.getTime() - offsetMinutes * 60_000);
+  return localDate.toISOString().slice(0, 16);
+}
+
+function getDefaultCaughtAt(mode: "create" | "edit", initialValue?: string) {
+  if (initialValue) {
+    return toDateTimeLocalValue(initialValue);
+  }
+
+  if (mode === "create") {
+    return toDateTimeLocalValue(new Date().toISOString());
+  }
+
+  return "";
+}
+
 interface CatchFormProps {
   mode: "create" | "edit";
   initialValues?: Catch;
@@ -35,7 +65,9 @@ export function CatchForm({
     defaultValues: {
       lat: initialValues?.lat,
       lon: initialValues?.lon,
+      caughtAt: getDefaultCaughtAt(mode, initialValues?.caught_at),
       species: initialValues?.species ?? "",
+      lengthCm: initialValues?.length_cm ?? undefined,
       methodCategory: initialValues?.method_category ?? "",
       depthM: initialValues?.depth_m ?? undefined,
       technique: initialValues?.technique_detail ?? "",
@@ -55,18 +87,24 @@ export function CatchForm({
   const selectedPoint = toMapPoint(watch("lat"), watch("lon"));
   const selectedSpecies = watch("species");
   const selectedMethodCategory = watch("methodCategory");
+  const methodCategoryValue =
+    selectedMethodCategory && selectedMethodCategory.trim().length > 0
+      ? selectedMethodCategory
+      : EMPTY_METHOD_CATEGORY;
 
   useEffect(() => {
     reset({
       lat: initialValues?.lat,
       lon: initialValues?.lon,
+      caughtAt: getDefaultCaughtAt(mode, initialValues?.caught_at),
       species: initialValues?.species ?? "",
+      lengthCm: initialValues?.length_cm ?? undefined,
       methodCategory: initialValues?.method_category ?? "",
       depthM: initialValues?.depth_m ?? undefined,
       technique: initialValues?.technique_detail ?? "",
       notes: initialValues?.notes ?? "",
     });
-  }, [initialValues, reset]);
+  }, [initialValues, mode, reset]);
 
   return (
     <Card className="overflow-hidden">
@@ -88,6 +126,24 @@ export function CatchForm({
               </p>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="caughtAt" className="text-base font-semibold">
+                  Caught at
+                </Label>
+                <Input
+                  id="caughtAt"
+                  type="datetime-local"
+                  className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
+                  {...register("caughtAt")}
+                />
+                {errors.caughtAt ? (
+                  <p className="text-sm text-destructive">{errors.caughtAt.message}</p>
+                ) : mode === "create" ? (
+                  <p className="text-sm text-muted-foreground">
+                    Defaults to the current local time when you open the logger.
+                  </p>
+                ) : null}
+              </div>
               <div className="space-y-2">
                 <Label className="text-base font-semibold">Species</Label>
                 <Select
@@ -117,12 +173,30 @@ export function CatchForm({
                   <p className="text-sm text-destructive">{errors.species.message}</p>
                 ) : null}
               </div>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="lengthCm" className="text-base font-semibold">
+                  Length (cm)
+                </Label>
+                <Input
+                  id="lengthCm"
+                  inputMode="decimal"
+                  className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
+                  placeholder="Optional"
+                  {...register("lengthCm")}
+                />
+                {errors.lengthCm ? (
+                  <p className="text-sm text-destructive">{errors.lengthCm.message}</p>
+                ) : null}
+              </div>
               <div className="space-y-2">
                 <Label className="text-base font-semibold">Method Category</Label>
                 <Select
-                  value={selectedMethodCategory}
+                  value={methodCategoryValue}
                   onValueChange={(value) =>
-                    setValue("methodCategory", value, {
+                    setValue("methodCategory", value === EMPTY_METHOD_CATEGORY ? "" : value, {
                       shouldDirty: true,
                       shouldValidate: true,
                     })
@@ -132,9 +206,10 @@ export function CatchForm({
                     aria-label="Method Category"
                     className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
                   >
-                    <SelectValue placeholder="Select method category" />
+                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value={EMPTY_METHOD_CATEGORY}>Optional</SelectItem>
                     {methodCategoryOptions.map((option) => (
                       <SelectItem key={option} value={option}>
                         {option}
@@ -142,9 +217,6 @@ export function CatchForm({
                     ))}
                   </SelectContent>
                 </Select>
-                {errors.methodCategory ? (
-                  <p className="text-sm text-destructive">{errors.methodCategory.message}</p>
-                ) : null}
               </div>
             </div>
 
@@ -157,7 +229,7 @@ export function CatchForm({
                   id="depthM"
                   inputMode="decimal"
                   className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
-                  placeholder="Optional depth in meters"
+                  placeholder="Optional"
                   {...register("depthM")}
                 />
                 {errors.depthM ? (
@@ -171,7 +243,7 @@ export function CatchForm({
                 <Input
                   id="technique"
                   className="h-16 rounded-[1.4rem] px-7 text-[1.05rem] md:text-[1.15rem]"
-                  placeholder="Spinning, jigging, fly..."
+                  placeholder="Optional, i.e. drop shot or jig"
                   {...register("technique")}
                 />
                 {errors.technique ? (

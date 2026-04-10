@@ -79,6 +79,9 @@ describe("CatchDetailPage", () => {
         lat: 52.3676,
         lon: 4.9041,
         species: "Sea Trout",
+        length_cm: 63.5,
+        method_category: "Spinning",
+        depth_m: 2.5,
         technique_detail: "Spinning",
         notes: "Near the jetty",
       },
@@ -104,6 +107,11 @@ describe("CatchDetailPage", () => {
     expect(screen.getByTestId("detail-map")).toHaveTextContent(
       "h-[360px]|1|52.3676,4.9041",
     );
+    expect(screen.getAllByText("Spinning")).toHaveLength(2);
+    expect(screen.getByText("63.5 cm")).toBeInTheDocument();
+    expect(screen.getByText("2.5 m")).toBeInTheDocument();
+    expect(screen.getByText("52.3676° N")).toBeInTheDocument();
+    expect(screen.getByText("4.9041° E")).toBeInTheDocument();
   });
 
   it("shows the empty state when the catch cannot be loaded", () => {

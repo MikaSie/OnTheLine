@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -56,6 +56,9 @@ describe("CatchForm", () => {
 
     await user.type(screen.getByLabelText("Latitude"), "52,3676");
     await user.type(screen.getByLabelText("Longitude"), "4,9041");
+    await user.clear(screen.getByLabelText("Caught at"));
+    await user.type(screen.getByLabelText("Caught at"), "2026-04-09T06:30");
+    await user.type(screen.getByLabelText("Length (cm)"), "61,5");
     await user.click(screen.getByRole("combobox", { name: "Species" }));
     await user.click(screen.getByRole("option", { name: "Sea Trout" }));
     await user.click(screen.getByRole("combobox", { name: "Method Category" }));
@@ -71,7 +74,9 @@ describe("CatchForm", () => {
       expect.objectContaining({
         lat: 52.3676,
         lon: 4.9041,
+        caughtAt: "2026-04-09T06:30",
         species: "Sea Trout",
+        lengthCm: 61.5,
         methodCategory: "Spinning",
         depthM: 3.5,
       }),
@@ -151,6 +156,7 @@ describe("CatchForm", () => {
           lat: 51.987654,
           lon: 4.123456,
           species: "Pike",
+          length_cm: 74.5,
           method_category: "Spinning",
           depth_m: 2.0,
           technique_detail: "Jerkbait",
@@ -162,6 +168,8 @@ describe("CatchForm", () => {
     expect(screen.getByTestId("selected-point")).toHaveTextContent(
       "51.987654,4.123456",
     );
+    expect(screen.getByLabelText("Caught at")).toHaveValue("2026-04-09T12:00");
+    expect(screen.getByLabelText("Length (cm)")).toHaveValue("74.5");
   });
 
   it("shows current and pending points separately before confirmation in edit mode", async () => {
@@ -180,6 +188,7 @@ describe("CatchForm", () => {
           lat: 51.987654,
           lon: 4.123456,
           species: "Pike",
+          length_cm: 74.5,
           method_category: "Spinning",
           depth_m: 2.0,
           technique_detail: "Jerkbait",
@@ -193,5 +202,40 @@ describe("CatchForm", () => {
     expect(screen.getByTestId("selected-point")).toHaveTextContent("51.987654,4.123456");
     expect(screen.getByTestId("pending-point")).toHaveTextContent("53.123456,6.654321");
     expect(screen.getByRole("button", { name: "Keep current location" })).toBeInTheDocument();
+  });
+
+  it("prefills the current time for new catches and allows method to stay optional", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <CatchForm
+        mode="create"
+        isSubmitting={false}
+        speciesOptions={["Perch", "Pike", "Sea Bass", "Sea Trout"]}
+        methodCategoryOptions={["Spinning", "Fly Fishing", "Other"]}
+        onSubmit={onSubmit}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByLabelText("Caught at")).not.toHaveValue("");
+    });
+
+    expect(screen.getByText("Defaults to the current local time when you open the logger.")).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText("Latitude"), "52.3676");
+    await user.type(screen.getByLabelText("Longitude"), "4.9041");
+    await user.click(screen.getByRole("combobox", { name: "Species" }));
+    await user.click(screen.getByRole("option", { name: "Sea Trout" }));
+    await user.click(screen.getByRole("button", { name: "Log catch" }));
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        species: "Sea Trout",
+        methodCategory: "",
+      }),
+      expect.anything(),
+    );
   });
 });
